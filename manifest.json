@@ -22,8 +22,8 @@
   "permissions": ["activeTab", "scripting"],
   "web_accessible_resources": [
     {
-      "resources": ["editor-render.iife.js"],
-      "matches": ["<all_urls>"]
+      "matches": ["<all_urls>"],
+      "resources": ["editor-render.iife.js"]
     }
   ]
 }

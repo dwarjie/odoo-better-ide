@@ -16,16 +16,16 @@ chrome.action.onClicked.addListener(async (tab) => {
     });
 
     if (nextState === "ON") {
-      chrome.scripting.registerContentScripts([
-        {
-          id: "editor-view",
-          js: ["editor-render.iife.js"],
-          persistAcrossSessions: false,
-          matches: ["<all_urls>"],
-          runAt: "document_start",
-          world: "ISOLATED",
-        },
-      ]);
+      chrome.scripting
+        .registerContentScripts([
+          {
+            id: "editor-view",
+            js: ["editor-render.iife.js"],
+            matches: ["*://demo5.odoo.com/*"],
+          },
+        ])
+        .then(() => console.log(`Content script registered!`))
+        .catch((err) => console.log(`Error: ${err}`));
       // chrome.scripting.executeScript({
       //   target: { tabId: tab.id },
       //   files: [contentScript],

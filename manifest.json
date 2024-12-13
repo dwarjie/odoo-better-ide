@@ -19,11 +19,12 @@
   "background": {
     "service_worker": "src/background.js"
   },
-  "permissions": ["activeTab", "scripting"],
-  "web_accessible_resources": [
+  "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "resources": ["editor-render.iife.js"]
+      "js": ["src/loader.js"],
+      "world": "MAIN"
     }
-  ]
+  ],
+  "permissions": ["activeTab", "scripting"]
 }

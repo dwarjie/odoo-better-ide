@@ -22,8 +22,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["src/loader.js"],
-      "world": "MAIN"
+      "js": ["src/loader.js"]
     }
   ],
   "permissions": ["activeTab", "scripting"]

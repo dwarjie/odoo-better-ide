@@ -5,25 +5,26 @@ import { getEditor, getEditorValue, setEditorValue } from '../../utils/aceHelper
 
 function Editor({ ace }) {
   let aceEditor = useRef(ace)
-  const [initialDoc, setInitialDoc] = useState(`print("Hello Odoo'ers!")`)
+  const valueRef = useRef(`print(Hello Odoo'ers!)`)
+  const [docValue, setDocValue] = useState(valueRef.current)
 
   useEffect(() => {
     const editor = aceEditor.current || undefined
     if (editor) {
       let value = getEditorValue(editor)
-      setInitialDoc(value)
+      setDocValue(value)
     }
   }, [])
 
-  const onChange = useCallback((val, viewUpdate) => {
-    setInitialDoc(val)
+  const handleDocChange = useCallback((val, viewUpdate) => {
+    setDocValue(val)
 
     const editor = aceEditor.current || undefined
     if (editor) {
       let value = setEditorValue(editor, val)
     }
-  }, [aceEditor.current]);
+  }, [aceEditor.current, docValue])
 
-  return <CodeMirror value={initialDoc} extensions={[python()]} onChange={onChange} />;
+  return <CodeMirror value={docValue} extensions={[python()]} onChange={handleDocChange} />;
 }
 export default Editor;

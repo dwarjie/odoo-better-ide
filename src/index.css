@@ -1,9 +1,69 @@
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+/* General container styling */
+.popup-container {
+  width: 300px;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #333;
 }
 
-body {
-    color: black;
+/* Title styling */
+.popup-title {
+  margin-bottom: 15px;
+  font-size: 20px;
+  text-align: center;
+  color: #444;
+}
+
+/* Individual settings */
+.setting-item {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Labels */
+.setting-item label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #555;
+}
+
+/* Inputs */
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+input[type="number"] {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+select {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Preview section */
+.status-preview {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #e8f4fd;
+  border: 1px solid #cce5ff;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #333;
+}
+
+.status-preview p {
+  margin: 5px 0;
+  font-weight: 500;
 }

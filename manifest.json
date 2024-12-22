@@ -20,5 +20,5 @@
       "js": ["src/loader.js"]
     }
   ],
-  "permissions": ["activeTab", "scripting"]
+  "permissions": ["activeTab", "scripting", "storage"]
 }

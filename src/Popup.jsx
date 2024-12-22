@@ -1,14 +1,61 @@
 import React, { useState } from "react";
-import "./index.css"
+import "./index.css";
+import { useEffect } from "react";
 
 function Popup() {
-  const [isEnabled, setIsEnabled] = useState(true);
-  const [theme, setTheme] = useState("Light");
-  const [fontSize, setFontSize] = useState(14);
+  const [userConfig, setUserConfig] = useState({
+    isEnabled: false,
+    theme: "Light",
+    fontsize: 10,
+  });
 
-  const handleToggle = () => setIsEnabled(!isEnabled);
-  const handleThemeChange = (e) => setTheme(e.target.value);
-  const handleFontSizeChange = (e) => setFontSize(e.target.value);
+  const fetchConfig = async () => {
+    try {
+      const config = await chrome.storage.sync.get();
+      setUserConfig(config);
+      console.log(`User config fetched`);
+    } catch (err) {
+      console.log(`User config fetching error: ${err}`);
+    }
+  };
+
+  const saveConfig = async () => {
+    try {
+      await chrome.storage.sync.set(userConfig).then(async () => {
+        console.log(`User config updated`);
+      });
+    } catch (err) {
+      console.log(`User config saving error: ${err}`);
+    }
+  };
+
+  useEffect(() => {
+    fetchConfig();
+  }, []);
+
+  const handleToggle = () => {
+    setUserConfig({
+      ...userConfig,
+      isEnabled: !userConfig.isEnabled,
+    });
+    saveConfig();
+  };
+
+  const handleThemeChange = (e) => {
+    setUserConfig({
+      ...userConfig,
+      theme: e.target.value,
+    });
+    saveConfig();
+  };
+
+  const handleFontSizeChange = (e) => {
+    setUserConfig({
+      ...userConfig,
+      fontsize: e.target.value,
+    });
+    saveConfig();
+  };
 
   return (
     <div className="popup-container">
@@ -18,7 +65,7 @@ function Popup() {
         <label>
           <input
             type="checkbox"
-            checked={isEnabled}
+            checked={userConfig.isEnabled}
             onChange={handleToggle}
           />
           Enable by Default
@@ -27,10 +74,13 @@ function Popup() {
 
       <div className="setting-item">
         <label htmlFor="theme">IDE Theme:</label>
-        <select id="theme" value={theme} onChange={handleThemeChange}>
+        <select
+          id="theme"
+          value={userConfig.theme}
+          onChange={handleThemeChange}
+        >
           <option value="Light">Light</option>
           <option value="Dark">Dark</option>
-          <option value="Monokai">Monokai</option>
         </select>
       </div>
 
@@ -39,7 +89,7 @@ function Popup() {
         <input
           id="fontSize"
           type="number"
-          value={fontSize}
+          value={userConfig.fontsize}
           onChange={handleFontSizeChange}
           min="10"
           max="30"
@@ -47,12 +97,14 @@ function Popup() {
       </div>
 
       <div className="status-preview">
-        <p>Extension is {isEnabled ? "Enabled" : "Disabled"}</p>
-        <p>Current Theme: {theme}</p>
-        <p>Font Size: {fontSize}px</p>
+        <p>
+          Extension is {userConfig.isEnabledDefault ? "Enabled" : "Disabled"}
+        </p>
+        <p>Current Theme: {userConfig.theme}</p>
+        <p>Font Size: {userConfig.fontsize}px</p>
       </div>
     </div>
   );
 }
 
-export default Popup
+export default Popup;

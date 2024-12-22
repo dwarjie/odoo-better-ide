@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback, useRef} from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { python } from "@codemirror/lang-python"
-import { getEditor, getEditorValue, setEditorValue } from '../../utils/aceHelper';
-import useMutationObserver from '../../utils/useMutationObserver';
+import { getEditorValue, setEditorValue } from '../../utils/aceHelper';
 
 function Editor({ ace }) {
   let aceEditor = useRef(ace)

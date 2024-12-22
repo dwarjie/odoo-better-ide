@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./index.css";
-import { useEffect } from "react";
 
 function Popup() {
   const [userConfig, setUserConfig] = useState({
@@ -33,6 +32,10 @@ function Popup() {
     fetchConfig();
   }, []);
 
+  useEffect(() => {
+    if (userConfig.isEnabled) executeScript();
+  }, [userConfig.isEnabled]);
+
   const handleToggle = () => {
     setUserConfig({
       ...userConfig,
@@ -55,6 +58,18 @@ function Popup() {
       fontsize: e.target.value,
     });
     saveConfig();
+  };
+
+  const executeScript = () => {
+    if (!userConfig.isEnabled) return;
+
+    chrome.runtime.sendMessage({ enabled: userConfig.isEnabled })
+    .then((response) => {
+      console.log(`Response: ${response}`)
+    })
+    .catch((err) => {
+      console.error(`Cannot send message to service-worker: ${err}`)
+    })
   };
 
   return (

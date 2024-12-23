@@ -1,9 +1,17 @@
 import editorRender from "./lib/EditorRender?script&module";
+import { elementReady } from "../utils/es6-element-ready";
 
-(function () {
-  const scriptElem = document.createElement("script");
-  scriptElem.type = "module";
-  scriptElem.src = chrome.runtime.getURL(editorRender);
-  (document.head || document.documentElement).appendChild(scriptElem);
-  console.log(`Script ${scriptElem}`);
+(async function () {
+  const config = await chrome.storage.sync.get("isEnabled").then((result) => {
+    console.log(result);
+    if (result.isEnabled) {
+      elementReady(".ace_editor").then((element) => {
+        console.log(`Element: ${element}`);
+        const scriptElem = document.createElement("script");
+        scriptElem.type = "module";
+        scriptElem.src = chrome.runtime.getURL(editorRender);
+        (document.head || document.documentElement).appendChild(scriptElem);
+      });
+    }
+  });
 })();

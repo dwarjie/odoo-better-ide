@@ -1,5 +1,3 @@
-import editorRender from "./lib/EditorRender?script&module";
-
 const USER_CONFIG = {
   isEnabled: false,
   theme: "light",
@@ -18,45 +16,18 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (message.enabled) {
-    const [tab] = await chrome.tabs.query({
-      active: true,
-      lastFocusedWindow: true,
-    });
-    chrome.scripting.executeScript({
-      target: {
-        tabId: tab.id,
-        allFrames: true,
-      },
-      files: [editorRender],
-      world: "MAIN",
-    });
-    sendResponse({ message: `Message successfully received` });
-    // getCurrentTab((tab) => {
-    //   chrome.scripting.executeScript({
-    //     target: {
-    //       tabId: tab.id,
-    //       allFrames: true,
-    //     },
-    //     files: [editorRender],
-    //     world: "MAIN",
-    //   });
-    // });
-    // sendResponse({ message: `Message successfully received` });
+  if (message.reload) {
+    try {
+      const [tab] = chrome.tabs.query({
+        active: true,
+        lastFocusedWindow: true,
+      });
+      chrome.tabs.reload(tab.id);
+      sendResponse({ message: `Page reloaded` });
+      return true;
+    } catch (err) {
+      sendResponse({ message: `Not possible to reload page: ${err}` });
+      return false;
+    }
   }
 });
-
-// const odooUrl = "https://demo";
-// chrome.action.onClicked.addListener(async (tab) => {
-//   if (tab.url.startsWith(odooUrl)) {
-//     const prevState = await chrome.action.getBadgeText({ tabId: tab.id });
-//     const nextState = prevState === "ON" ? "OFF" : "ON";
-
-//     if (nextState === "ON") {
-//       console.log("ON");
-//     } else if (nextState === "OFF") {
-//       console.log("OFF");
-//       // TODO: Remove the Code Mirror in the browser
-//     }
-//   }
-// });

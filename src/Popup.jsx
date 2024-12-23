@@ -32,38 +32,33 @@ function Popup() {
     fetchConfig();
   }, []);
 
-  useEffect(() => {
-    if (userConfig.isEnabled) executeScript();
-  }, [userConfig.isEnabled]);
-
-  const handleToggle = () => {
+  const handleToggle = async () => {
     setUserConfig({
       ...userConfig,
       isEnabled: !userConfig.isEnabled,
     });
-    saveConfig();
+    if (userConfig.isEnabled) reloadLoader();
+    await saveConfig();
   };
 
-  const handleThemeChange = (e) => {
+  const handleThemeChange = async (e) => {
     setUserConfig({
       ...userConfig,
       theme: e.target.value,
     });
-    saveConfig();
+    await saveConfig();
   };
 
-  const handleFontSizeChange = (e) => {
+  const handleFontSizeChange = async (e) => {
     setUserConfig({
       ...userConfig,
       fontsize: e.target.value,
     });
-    saveConfig();
+    await saveConfig();
   };
 
-  const executeScript = () => {
-    if (!userConfig.isEnabled) return;
-
-    chrome.runtime.sendMessage({ enabled: userConfig.isEnabled })
+  const reloadLoader = () => {
+    chrome.runtime.sendMessage({ reload: true })
     .then((response) => {
       console.log(`Response: ${response}`)
     })

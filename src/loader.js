@@ -2,7 +2,7 @@ import editorRender from "./lib/EditorRender?script&module";
 import { elementReady } from "../utils/es6-element-ready";
 
 (async function () {
-  const config = await chrome.storage.sync.get("isEnabled").then((result) => {
+  const config = await chrome.storage.local.get("isEnabled").then((result) => {
     console.log(result);
     if (result.isEnabled) {
       elementReady(".ace_editor").then((element) => {

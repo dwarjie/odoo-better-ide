@@ -15,18 +15,21 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 });
 
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.reload) {
     try {
-      const [tab] = chrome.tabs.query({
-        active: true,
-        lastFocusedWindow: true,
-      });
-      chrome.tabs.reload(tab.id);
-      sendResponse({ message: `Page reloaded` });
+      chrome.tabs
+        .query({
+          active: true,
+          currentWindow: true,
+        })
+        .then((tab) => {
+          console.log(tab);
+          chrome.tabs.reload(tab.id);
+        });
       return true;
     } catch (err) {
-      sendResponse({ message: `Not possible to reload page: ${err}` });
+      console.log(`Not possible to reload page: ${err}`);
       return false;
     }
   }

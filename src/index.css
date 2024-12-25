@@ -67,3 +67,38 @@ select {
   margin: 5px 0;
   font-weight: 500;
 }
+
+/* General button styles */
+.btn-reload {
+  background-color: #007bff; /* Primary blue color */
+  color: #ffffff; /* White text */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 15px; /* Padding for a clickable area */
+  font-size: 14px; /* Medium font size */
+  font-weight: bold; /* Bold text */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease; /* Smooth transition */
+}
+
+/* Hover effect */
+.btn-reload:hover {
+  background-color: #0056b3; /* Slightly darker blue */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Active effect */
+.btn-reload:active {
+  background-color: #004080; /* Even darker blue for active state */
+  box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.2); /* Inner shadow effect */
+}
+
+/* Disabled state */
+.btn-reload:disabled {
+  background-color: #cccccc; /* Light gray for disabled state */
+  color: #666666; /* Darker gray for text */
+  cursor: not-allowed; /* Not-allowed cursor */
+  box-shadow: none; /* Remove shadow */
+}

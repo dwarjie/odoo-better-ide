@@ -1,5 +1,3 @@
-import editorRender from "./lib/EditorRender?script&module";
-
 const USER_CONFIG = {
   isEnabled: false,
   theme: "light",
@@ -17,25 +15,22 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 });
 
-const odooUrl = "https://demo";
-chrome.action.onClicked.addListener(async (tab) => {
-  if (tab.url.startsWith(odooUrl)) {
-    const prevState = await chrome.action.getBadgeText({ tabId: tab.id });
-    const nextState = prevState === "ON" ? "OFF" : "ON";
-
-    if (nextState === "ON") {
-      console.log("ON");
-      chrome.scripting.executeScript({
-        target: {
-          tabId: tab.id,
-          allFrames: true,
-        },
-        files: [editorRender],
-        world: "MAIN",
-      });
-    } else if (nextState === "OFF") {
-      console.log("OFF");
-      // TODO: Remove the Code Mirror in the browser
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.reload) {
+    try {
+      chrome.tabs
+        .query({
+          active: true,
+          currentWindow: true,
+        })
+        .then((tab) => {
+          console.log(tab);
+          chrome.tabs.reload(tab.id);
+        });
+      return true;
+    } catch (err) {
+      console.log(`Not possible to reload page: ${err}`);
+      return false;
     }
   }
 });

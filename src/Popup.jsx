@@ -1,60 +1,65 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./index.css";
-import { useEffect } from "react";
 
 function Popup() {
-  const [userConfig, setUserConfig] = useState({
-    isEnabled: false,
-    theme: "Light",
-    fontsize: 10,
-  });
-
-  const fetchConfig = async () => {
-    try {
-      const config = await chrome.storage.sync.get();
-      setUserConfig(config);
-      console.log(`User config fetched`);
-    } catch (err) {
-      console.log(`User config fetching error: ${err}`);
-    }
-  };
-
-  const saveConfig = async () => {
-    try {
-      await chrome.storage.sync.set(userConfig).then(async () => {
-        console.log(`User config updated`);
-      });
-    } catch (err) {
-      console.log(`User config saving error: ${err}`);
-    }
-  };
+  const [userConfig, setUserConfig] = useState({});
 
   useEffect(() => {
-    fetchConfig();
+    console.log("useEffect");
+    chrome.storage.sync
+      .get()
+      .then((config) => {
+        setUserConfig(config);
+        console.dir(`User config fetched: ${JSON.stringify(config, null, 2)}`);
+      })
+      .catch((err) => {
+        console.log(`Error fetching user config: ${err}`);
+      });
   }, []);
 
+  const saveConfig = (item) => {
+    chrome.storage.sync
+      .set(item)
+      .then(() => console.log(`User config updated: ${JSON.stringify(item)}`))
+      .catch((err) => console.log(`Error updating config: ${err}`));
+  };
+
   const handleToggle = () => {
-    setUserConfig({
-      ...userConfig,
-      isEnabled: !userConfig.isEnabled,
-    });
-    saveConfig();
+    saveConfig({ isEnabled: !userConfig.isEnabled });
+    setUserConfig({ ...userConfig, isEnabled: !userConfig.isEnabled });
   };
 
   const handleThemeChange = (e) => {
+    const newValue = e.target.value;
+
+    saveConfig({ theme: newValue });
     setUserConfig({
       ...userConfig,
-      theme: e.target.value,
+      theme: newValue,
     });
-    saveConfig();
   };
 
   const handleFontSizeChange = (e) => {
+    const newValue = e.target.value;
+
+    saveConfig({ fontSize: newValue });
     setUserConfig({
       ...userConfig,
-      fontsize: e.target.value,
+      fontSize: newValue,
     });
-    saveConfig();
+  };
+
+  const reloadLoader = () => {
+    if (!userConfig.isEnabled) return
+
+    chrome.runtime
+      .sendMessage({ reload: true })
+      .then((response) => {
+        console.log(`Page reloaded`);
+      })
+      .catch((err) => {
+        console.error(`Cannot send message to service-worker: ${err}`);
+      });
   };
 
   return (
@@ -62,9 +67,11 @@ function Popup() {
       <h2 className="popup-title">🌟 IDE Settings</h2>
 
       <div className="setting-item">
-        <label>
+        <label htmlFor="isEnabled">
           <input
             type="checkbox"
+            id="isEnabled"
+            defaultChecked={userConfig.isEnabled}
             checked={userConfig.isEnabled}
             onChange={handleToggle}
           />
@@ -77,10 +84,10 @@ function Popup() {
         <select
           id="theme"
           value={userConfig.theme}
-          onChange={handleThemeChange}
+          onChange={(e) => handleThemeChange(e)}
         >
-          <option value="Light">Light</option>
-          <option value="Dark">Dark</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
         </select>
       </div>
 
@@ -89,19 +96,21 @@ function Popup() {
         <input
           id="fontSize"
           type="number"
-          value={userConfig.fontsize}
-          onChange={handleFontSizeChange}
+          value={userConfig.fontSize}
+          onChange={(e) => handleFontSizeChange(e)}
           min="10"
           max="30"
         />
       </div>
 
+      <button onClick={reloadLoader} className="btn-reload" id="btn-reload">
+        Reload IDE
+      </button>
+
       <div className="status-preview">
-        <p>
-          Extension is {userConfig.isEnabledDefault ? "Enabled" : "Disabled"}
-        </p>
+        <p>Extension is {userConfig.isEnabled ? "Enabled" : "Disabled"}</p>
         <p>Current Theme: {userConfig.theme}</p>
-        <p>Font Size: {userConfig.fontsize}px</p>
+        <p>Font Size: {userConfig.fontSize}px</p>
       </div>
     </div>
   );

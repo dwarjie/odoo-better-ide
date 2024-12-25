@@ -14,4 +14,18 @@ import { elementReady } from "../utils/es6-element-ready";
       });
     }
   });
+
+  window.addEventListener("message", (event) => {
+    if (event.data.getConfig) {
+      chrome.storage.sync
+        .get()
+        .then((result) => {
+          event.source.postMessage({ ...result, isConfig: true }, event.origin);
+          console.log(`Post message event: ${JSON.stringify(event.data)}`);
+        })
+        .catch((err) =>
+          console.log(`Error sending message to page script: ${err}`),
+        );
+    }
+  });
 })();

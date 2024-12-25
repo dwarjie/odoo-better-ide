@@ -1,6 +1,6 @@
 const USER_CONFIG = {
   isEnabled: false,
-  theme: "light",
+  theme: "basic-light",
   fontSize: 10,
 };
 

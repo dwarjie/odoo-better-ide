@@ -12,7 +12,15 @@
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.2",
     "@codemirror/lang-python": "^6.1.6",
-    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@uiw/codemirror-theme-atomone": "^4.23.7",
+    "@uiw/codemirror-theme-basic": "^4.23.7",
+    "@uiw/codemirror-theme-dracula": "^4.23.7",
+    "@uiw/codemirror-theme-github": "^4.23.7",
+    "@uiw/codemirror-theme-monokai": "^4.23.7",
+    "@uiw/codemirror-theme-solarized": "^4.23.7",
+    "@uiw/codemirror-theme-tokyo-night": "^4.23.7",
+    "@uiw/codemirror-theme-tokyo-night-day": "^4.23.7",
+    "@uiw/codemirror-theme-tokyo-night-storm": "^4.23.7",
     "@uiw/react-codemirror": "^4.23.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

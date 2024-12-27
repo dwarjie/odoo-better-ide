@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
-import { EditorView } from "@codemirror/view";
+import { EditorView, keymap } from "@codemirror/view";
 import { basicSetup } from "codemirror";
+import { indentWithTab, historyKeymap } from "@codemirror/commands";
 import { python } from "@codemirror/lang-python";
 import { Compartment } from "@codemirror/state";
 // themes
@@ -45,6 +46,7 @@ const useCodeMirror = ({ initialDoc, onChange, userTheme }) => {
       doc: initialDoc,
       extensions: [
         basicSetup,
+        keymap.of([indentWithTab, historyKeymap]),
         python(),
         EditorView.updateListener.of((update) => {
           if (update.changes) {

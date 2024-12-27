@@ -20,7 +20,7 @@ version 1:
 [x] - Implement theme
 [ ] - Test with other page of Odoo
   [ ] - Server Actions
-  [ ] - Scheduled Actions
+  [x] - Scheduled Actions
   [ ] - Views
   [ ] - Form Views
   [ ] - Website editor

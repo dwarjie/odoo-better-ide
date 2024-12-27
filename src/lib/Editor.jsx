@@ -1,22 +1,15 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { getEditorValue, setEditorValue } from "../../utils/aceHelper";
+import { setEditorValue } from "../../utils/aceHelper";
 import useCodeMirror from "../../utils/useCodeMirror";
 import "../index.css"
 
-function Editor({ ace }) {
-  const editorRef = useRef(null);
+function Editor({ ace, initialDoc }) {
   const aceEditor = useRef(ace);
-  const [docValue, setDocValue] = useState(`print("Hello Odoo'ers!")`);
+  const [docValue, setDocValue] = useState(initialDoc);
   const [userConfig, setUserConfig] = useState({});
   const size = { fontSize: `${userConfig.fontSize}px` };
 
   useEffect(() => {
-    const editor = aceEditor.current || undefined;
-    if (editor) {
-      let value = getEditorValue(editor);
-      setDocValue(value);
-    }
-
     window.postMessage({ getConfig: true });
   }, []);
 
@@ -30,52 +23,8 @@ function Editor({ ace }) {
         let value = setEditorValue(editor, val);
       }
     },
-    [],
+    [aceEditor.current],
   );
-
-
-  // const getTheme = () => {
-  //   let theme = null;
-  //   switch (userConfig.theme) {
-  //     case "basic-dark":
-  //       theme = basicDark;
-  //       break;
-  //     case "andromeda":
-  //       theme = atomone;
-  //       break;
-  //     case "dracula":
-  //       theme = dracula;
-  //       break;
-  //     case "github-light":
-  //       theme = githubLight;
-  //       break;
-  //     case "github-dark":
-  //       theme = githubDark;
-  //       break;
-  //     case "monokai":
-  //       theme = monokai;
-  //       break;
-  //     case "solarized-light":
-  //       theme = solarizedLight;
-  //       break;
-  //     case "solarized-dark":
-  //       theme = solarizedDark;
-  //       break;
-  //     case "tokyo-night":
-  //       theme = tokyoNight;
-  //       break;
-  //     case "tokyo-storm":
-  //       theme = tokyoNightStorm;
-  //       break;
-  //     case "tokyo-night-day":
-  //       theme = tokyoNightDay;
-  //       break;
-  //     default:
-  //       theme = basicLight;
-  //   }
-
-  //   return theme;
-  // };
 
   window.addEventListener(
     "message",
@@ -92,8 +41,7 @@ function Editor({ ace }) {
     false,
   );
 
-  const [refContainer, editorView] = useCodeMirror({initialDoc: docValue, onChange: handleDocChange})
-
+  const [refContainer, editorView] = useCodeMirror({initialDoc: docValue, onChange: handleDocChange, userTheme: userConfig.theme})
   return (
     <div className="editor-wrapper" ref={refContainer} style={size}>
     </div>

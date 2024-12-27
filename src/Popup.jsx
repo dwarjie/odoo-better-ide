@@ -87,17 +87,10 @@ function Popup() {
           onChange={(e) => handleThemeChange(e)}
         >
           <option value="basic-light">Basic Light</option>
-          <option value="basic-dark">Basic Dark</option>
-          <option value="andromeda">Andromeda</option>
-          <option value="dracula">Dracula</option>
-          <option value="github-light">Github Light</option>
-          <option value="github-dark">Github Dark</option>
+          <option value="material-light">Material Light</option>
+          <option value="one-dark">One Dark</option>
+          <option value="material-dark">Material Dark</option>
           <option value="monokai">Monokai</option>
-          <option value="solarized-light">Solorized Light</option>
-          <option value="solarized-dark">Solorized Dark</option>
-          <option value="tokyo-night">Tokyo Night</option>
-          <option value="tokyo-storm">Tokyo Storm</option>
-          <option value="tokyo-night-day">Tokyo Night Day</option>
         </select>
       </div>
 

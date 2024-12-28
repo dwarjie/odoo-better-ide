@@ -4,11 +4,10 @@ import { getEditorValue } from '../../utils/aceHelper'
 import Editor from './Editor'
 import "../index.css"
 
-const PYTHON_MODE = "python"
 const aceEditor = document.querySelector(".ace_editor")
 const codeMirrorWrapper = document.createElement("div")
 
-if (codeMirrorWrapper && aceEditor && aceEditor.dataset.mode === PYTHON_MODE) {
+if (codeMirrorWrapper && aceEditor) {
   aceEditor.style = `display: none;`
   const editor = aceEditor || `print("Hello")`;
   let value = getEditorValue(editor);
@@ -19,5 +18,5 @@ if (codeMirrorWrapper && aceEditor && aceEditor.dataset.mode === PYTHON_MODE) {
     </StrictMode>
   )
 } else {
-  console.warn("Odoo Better IDE does not support this view/language yet")
+  console.warn("Odoo Better IDE does not support yet")
 }

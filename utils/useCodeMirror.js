@@ -2,10 +2,11 @@ import { useRef, useState, useEffect } from "react";
 import { EditorView, keymap } from "@codemirror/view";
 import { basicSetup } from "codemirror";
 import { indentWithTab, historyKeymap } from "@codemirror/commands";
-import { indentOnInput } from "@codemirror/language";
+import { indentOnInput, indentUnit } from "@codemirror/language";
 import { matchBrackets } from "@codemirror/matchbrackets";
 import { python } from "@codemirror/lang-python";
 import { Compartment } from "@codemirror/state";
+import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 // themes
 import { oneDark } from "@codemirror/theme-one-dark";
 import { materialDark } from "@fsegurai/codemirror-theme-material-dark";
@@ -48,8 +49,10 @@ const useCodeMirror = ({ initialDoc, onChange, userTheme }) => {
       doc: initialDoc,
       extensions: [
         basicSetup,
+        indentUnit.of("    "),
         keymap.of([indentWithTab, historyKeymap]),
         python(),
+        indentationMarkers(),
         EditorView.updateListener.of((update) => {
           if (update.changes) {
             onChange && onChange(update.state);

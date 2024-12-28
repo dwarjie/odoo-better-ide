@@ -5,14 +5,9 @@ const USER_CONFIG = {
 };
 
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.sync
-    .set(USER_CONFIG)
-    .then(() => {
-      console.log(`Initial User config saved`);
-    })
-    .catch((err) => {
-      console.log(`Error saving initial user config: ${err}`);
-    });
+  chrome.storage.sync.set(USER_CONFIG).catch((err) => {
+    console.error(`Error saving initial user config: ${err}`);
+  });
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -24,12 +19,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           currentWindow: true,
         })
         .then((tab) => {
-          console.log(tab);
           chrome.tabs.reload(tab.id);
         });
       return true;
     } catch (err) {
-      console.log(`Not possible to reload page: ${err}`);
+      console.error(`Not possible to reload page: ${err}`);
       return false;
     }
   }

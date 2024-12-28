@@ -5,23 +5,20 @@ function Popup() {
   const [userConfig, setUserConfig] = useState({});
 
   useEffect(() => {
-    console.log("useEffect");
     chrome.storage.sync
       .get()
       .then((config) => {
         setUserConfig(config);
-        console.dir(`User config fetched: ${JSON.stringify(config, null, 2)}`);
       })
       .catch((err) => {
-        console.log(`Error fetching user config: ${err}`);
+        console.error(`Error fetching user config: ${err}`);
       });
   }, []);
 
   const saveConfig = (item) => {
     chrome.storage.sync
       .set(item)
-      .then(() => console.log(`User config updated: ${JSON.stringify(item)}`))
-      .catch((err) => console.log(`Error updating config: ${err}`));
+      .catch((err) => console.error(`Error updating config: ${err}`));
   };
 
   const handleToggle = () => {
@@ -50,13 +47,8 @@ function Popup() {
   };
 
   const reloadLoader = () => {
-    if (!userConfig.isEnabled) return
-
     chrome.runtime
       .sendMessage({ reload: true })
-      .then((response) => {
-        console.log(`Page reloaded`);
-      })
       .catch((err) => {
         console.error(`Cannot send message to service-worker: ${err}`);
       });
@@ -107,7 +99,7 @@ function Popup() {
       </div>
 
       <button onClick={reloadLoader} className="btn-reload" id="btn-reload">
-        Reload IDE
+        Reload Page
       </button>
 
       <div className="status-preview">

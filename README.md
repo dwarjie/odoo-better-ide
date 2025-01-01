@@ -1,4 +1,12 @@
-# Odoo-better-ide
+<h1 align="center" style="border-bottom: 0px;">
+    <img src="images/icon-128.png"/>
+    <div>Odoo Better IDE</div>
+    <div>
+        <a href="https://chromewebstore.google.com/detail/odoo-better-ide/gdgcmoimojllogljdillajcgdgecfknd">
+            <img src="https://img.shields.io/chrome-web-store/v/jllbemjkkabaohnjcnajhflahlkehmlf.svg?label=Chrome&color=1a73e8" alt="Chrome Web Store">
+        </a>
+    </div>
+</h1>
 
 ### **Odoo Better IDE - Supercharge Your Odoo IDE!** 🚀
 

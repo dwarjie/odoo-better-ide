@@ -1,6 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Odoo Better Ide",
+  "description": "Enhance Odoo Code Editor",
   "version": "1.0.0",
   "icons": {
     "16": "images/icon-16.png",
@@ -21,5 +22,5 @@
       "js": ["src/loader.js"]
     }
   ],
-  "permissions": ["activeTab", "scripting", "storage"]
+  "permissions": ["activeTab", "storage"]
 }

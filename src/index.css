@@ -102,3 +102,12 @@ select {
   cursor: not-allowed; /* Not-allowed cursor */
   box-shadow: none; /* Remove shadow */
 }
+
+.editor-wrapper {
+  height: 100%;
+  font-size: 12px;
+}
+
+.hide-editor {
+  display: none;
+}

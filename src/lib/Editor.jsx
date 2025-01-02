@@ -1,34 +1,16 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { setEditorValue } from "../../utils/aceHelper";
 import useCodeMirror from "../../utils/useCodeMirror";
 import "../index.css"
 
-function Editor({ ace, initialDoc }) {
+function Editor({ ace, initialDoc, discardButton }) {
   const aceEditor = useRef(ace);
   const [docValue, setDocValue] = useState(initialDoc);
   const [userConfig, setUserConfig] = useState({});
   const size = { fontSize: `${userConfig.fontSize}px` };
 
   useEffect(() => {
-    window.postMessage({ getConfig: true });
-  }, []);
-
-  const handleDocChange = useCallback(
-    (state) => {
-      const val = state.doc.toString()
-      setDocValue(val)
-
-      const editor = aceEditor.current || undefined;
-      if (editor) {
-        let value = setEditorValue(editor, val);
-      }
-    },
-    [aceEditor.current],
-  );
-
-  window.addEventListener(
-    "message",
-    (event) => {
+    const handleMessage = (event) => {
       if (event.data.isConfig) {
         const config = {
           isEnabled: event.data.isEnabled,
@@ -37,11 +19,39 @@ function Editor({ ace, initialDoc }) {
         };
         setUserConfig(config);
       }
-    },
-    false,
-  );
+    };
+    window.addEventListener("message", handleMessage);
+    window.postMessage({ getConfig: true });
 
-  const [refContainer, editorView] = useCodeMirror({initialDoc: docValue, onChange: handleDocChange, userTheme: userConfig.theme})
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
+  const handleDocChange = (state) => {
+    const val = state.doc.toString()
+    setDocValue(val)
+
+    const editor = aceEditor.current || undefined;
+    if (editor) {
+      let value = setEditorValue(editor, val);
+    }
+  };
+
+  const [refContainer, editorView] = useCodeMirror({ initialDoc: docValue, onChange: handleDocChange, userTheme: userConfig.theme })
+
+  useEffect(() => {
+    if (!discardButton || !editorView) return;
+
+    const handleDiscard = (event) => {
+      editorView.dispatch({
+        changes: { from: 0, to: editorView.state.doc.length, insert: initialDoc },
+      });
+      setDocValue(initialDoc);
+    }
+
+    discardButton.addEventListener("click", handleDiscard);
+    return () => discardButton.removeEventListener("click", handleDiscard);
+  }, [discardButton, editorView, initialDoc]);
+
   return (
     <div className="editor-wrapper" ref={refContainer} style={size}>
     </div>

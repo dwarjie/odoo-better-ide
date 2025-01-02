@@ -6,6 +6,7 @@ import "../index.css"
 
 const aceEditor = document.querySelector(".ace_editor")
 const codeMirrorWrapper = document.createElement("div")
+const discardButton = document.querySelector("button.o_form_button_cancel")
 
 if (codeMirrorWrapper && aceEditor) {
   aceEditor.style = `display: none;`
@@ -14,7 +15,7 @@ if (codeMirrorWrapper && aceEditor) {
   aceEditor.insertAdjacentElement("afterend", codeMirrorWrapper)
   createRoot(codeMirrorWrapper).render(
     <StrictMode>
-      <Editor ace={aceEditor} initialDoc={value}/>
+      <Editor ace={aceEditor} initialDoc={value} discardButton={discardButton} />
     </StrictMode>
   )
 } else {

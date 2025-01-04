@@ -34,9 +34,23 @@ Key Features:
 3. [x] **Customizations:** Allow theme, font size.
 4. [ ] **Multi-language support:** Supports Python, XML, JavaScript, HTML, CSS (supports Python for now).
 5. [ ] **Enabled by default:** Automatically embed the CodeMirror editor to the page when enabled (need to reload the browser for now).
-6. [ ] **Handle Odoo Discard:** Revert code when user clicked the discard button.
+6. [x] **Handle Odoo Discard:** Revert code when user clicked the discard button. (thanks to [acgonzales](https://github.com/acgonzales) )
 6. [ ] **Vim Keybinds:** Use Vim-like keybinding.
 
 ### Technologies:
 1. **CodeMirror 6:** A versatile text editor implemented in JavaScript for browsers.
 2. **Chrome Extensions API:** For injecting scripts and interacting with web pages.
+
+### Clone and Customize:
+```bash
+# clone the repo
+git clone https://github.com/dwarjie/odoo-better-ide.git
+cd odoo-better-ide
+
+# install necessary packages
+npm install
+
+# build the extension
+npm run build
+```
+Follow this [link](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked) on how to use the built extension locally.

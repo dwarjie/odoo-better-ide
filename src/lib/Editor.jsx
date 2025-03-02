@@ -3,7 +3,7 @@ import { setEditorValue } from "../../utils/aceHelper";
 import useCodeMirror from "../../utils/useCodeMirror";
 import "../index.css"
 
-function Editor({ ace, initialDoc, discardButton }) {
+function Editor({ ace, initialDoc, discardButton, languageMode }) {
   const aceEditor = useRef(ace);
   const [docValue, setDocValue] = useState(initialDoc);
   const [userConfig, setUserConfig] = useState({});
@@ -36,7 +36,7 @@ function Editor({ ace, initialDoc, discardButton }) {
     }
   };
 
-  const [refContainer, editorView] = useCodeMirror({ initialDoc: docValue, onChange: handleDocChange, userTheme: userConfig.theme })
+  const [refContainer, editorView] = useCodeMirror({ initialDoc: docValue, onChange: handleDocChange, userTheme: userConfig.theme, languageMode: languageMode })
 
   useEffect(() => {
     if (!discardButton || !editorView) return;

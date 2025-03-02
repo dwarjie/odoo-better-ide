@@ -16,6 +16,7 @@ Tired of the plain Odoo code editor? Say hello to **Odoo Better IDE**, the ultim
 ✨ **Modern Code Editor**: Experience the power of **CodeMirror 6** with IntelliSense, autocompletion, and an overall sleek interface.  
 ✨ **Real-Time Syncing**: Seamlessly sync your edits from our enhanced editor to the Odoo editor in real time—no manual hassle.  
 ✨ **Full Customization**: Make it yours! Choose from stunning themes and adjust font sizes for your perfect coding environment.  
+✨ **Find & Replace**: Integrated VSCode like-Find & Replace.  
 
 ### **Why You'll Love It:**
 ✅ Effortless setup—just install and start coding!  
@@ -32,10 +33,11 @@ Key Features:
 1. [x] **Enhanced Code Editor:** Add a modern editor with Intellisense and Autocompletion using CodeMirror 6.
 2. [x] **Real-Time Syncing:** Sync code from CodeMirror to Odoo editor (in the background).
 3. [x] **Customizations:** Allow theme, font size.
-4. [ ] **Multi-language support:** Supports Python, XML, JavaScript, HTML, CSS (supports Python for now).
+4. [x] **Multi-language support:** Supports Python, XML, JavaScript, HTML, CSS (supports Python for now).
 5. [ ] **Enabled by default:** Automatically embed the CodeMirror editor to the page when enabled (need to reload the browser for now).
 6. [x] **Handle Odoo Discard:** Revert code when user clicked the discard button. (thanks to [acgonzales](https://github.com/acgonzales) )
 6. [ ] **Vim Keybinds:** Use Vim-like keybinding.
+4. [ ] **Support Editor:** Supports JavaScript, HTML, and CSS for modifying the website.
 
 ### Technologies:
 1. **CodeMirror 6:** A versatile text editor implemented in JavaScript for browsers.

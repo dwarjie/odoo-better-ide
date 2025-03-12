@@ -19,9 +19,10 @@ export function elementReady(selector) {
       // Query for elements matching the specified selector
       const element = document.querySelector(selector);
       if (element) {
+        console.log(`Found: ${element}`);
         resolve(element);
         //Once we have resolved we don't need the observer anymore.
-        observer.disconnect();
+        // observer.disconnect();
       }
     }).observe(document.documentElement, {
       childList: true,

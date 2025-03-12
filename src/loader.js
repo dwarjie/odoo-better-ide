@@ -2,7 +2,6 @@ import editorRender from "./lib/EditorRender?script&module";
 import { elementReady } from "../utils/es6-element-ready";
 
 (async function () {
-  let elementQue = [];
   const config = await chrome.storage.sync.get().then((result) => {
     if (result.isEnabled) {
       const scriptElem = document.createElement("script");

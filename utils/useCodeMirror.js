@@ -53,7 +53,6 @@ const useCodeMirror = ({ initialDoc, onChange, userTheme, languageMode }) => {
       default:
         language = python;
     }
-
     return view.dispatch({
       effects: languageConfig.reconfigure(language()),
     });

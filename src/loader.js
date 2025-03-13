@@ -1,5 +1,4 @@
 import editorRender from "./lib/EditorRender?script&module";
-import { elementReady } from "../utils/es6-element-ready";
 
 (async function () {
   const config = await chrome.storage.sync.get().then((result) => {

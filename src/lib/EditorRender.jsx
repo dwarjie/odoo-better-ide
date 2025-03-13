@@ -33,5 +33,7 @@ const observer = new MutationObserver((mutationRecord) => {
   }
 });
 observer.observe(document.documentElement, {
-  childList: true,
+  subtree: true,
+  attributes: true,
+  attributeFilter: ["data-mode"]
 });

@@ -4,6 +4,7 @@ const getObserverConfig = (odooVersion) => {
     let strVersion = odooVersion;
     odooVersion = strVersion.replace(/\D/g, "");
   }
+
   if (odooVersion > 17)
     return {
       subtree: true,

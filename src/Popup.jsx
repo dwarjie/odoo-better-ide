@@ -36,6 +36,16 @@ function Popup() {
     });
   };
 
+  const handleLanguageChange = (e) => {
+    const newValue = e.target.value;
+
+    saveConfig({ language: newValue });
+    setUserConfig({
+      ...userConfig,
+      language: newValue,
+    });
+  };
+
   const handleFontSizeChange = (e) => {
     const newValue = e.target.value;
 
@@ -75,11 +85,12 @@ function Popup() {
         <label htmlFor="language">Language:</label>
         <select
           id="language"
-          value={userConfig.python}
-          // onChange={(e) => handleThemeChange(e)}
+          value={userConfig.language}
+          onChange={(e) => handleLanguageChange(e)}
         >
           <option value="python">Python</option>
           <option value="xml">XML</option>
+          <option value="qweb">Qweb</option>
         </select>
       </div>
 

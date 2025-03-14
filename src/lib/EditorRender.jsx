@@ -18,7 +18,7 @@ if (odooVersion) {
     const discardButton = document.querySelector("button.o_form_button_cancel");
 
     if (codeMirrorWrapper && aceEditor) {
-      let languageMode = aceEditor.dataset.mode || "qweb";
+      let languageMode = aceEditor.dataset.mode || "xml";
       aceEditor.style = `display: none;`;
       const editor = aceEditor || `print("Hello")`;
       let value = getEditorValue(editor);

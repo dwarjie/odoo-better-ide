@@ -14,7 +14,13 @@ import { materialLight } from "@fsegurai/codemirror-theme-material-light";
 import { monokai } from "@fsegurai/codemirror-theme-monokai";
 import { basicLight } from "@fsegurai/codemirror-theme-basic-light";
 
-const useCodeMirror = ({ initialDoc, onChange, userTheme, languageMode }) => {
+const useCodeMirror = ({
+  initialDoc,
+  onChange,
+  userTheme,
+  languageMode,
+  setLanguageConfig,
+}) => {
   const refContainer = useRef(null);
   const [editorView, setEditorView] = useState(null);
   const themeConfig = new Compartment();
@@ -50,9 +56,13 @@ const useCodeMirror = ({ initialDoc, onChange, userTheme, languageMode }) => {
       case "xml":
         language = xml;
         break;
+      case "python":
+        language = python;
+        break;
       default:
         language = python;
     }
+    setLanguageConfig(languageMode);
     return view.dispatch({
       effects: languageConfig.reconfigure(language()),
     });
@@ -68,7 +78,7 @@ const useCodeMirror = ({ initialDoc, onChange, userTheme, languageMode }) => {
         basicSetup,
         indentUnit.of("    "),
         keymap.of([indentWithTab, historyKeymap]),
-        languageConfig.of(python()),
+        languageConfig.of(xml()),
         indentationMarkers(),
         EditorView.updateListener.of((update) => {
           if (update.changes) {

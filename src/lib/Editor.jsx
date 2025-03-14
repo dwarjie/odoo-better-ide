@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { setEditorValue } from "../../utils/aceHelper";
 import useCodeMirror from "../../utils/useCodeMirror";
-import "../index.css"
+import "../index.css";
 
 function Editor({ ace, initialDoc, discardButton, languageMode }) {
   const aceEditor = useRef(ace);
@@ -27,9 +27,13 @@ function Editor({ ace, initialDoc, discardButton, languageMode }) {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
+  const setLanguageConfig = (language) => {
+    window.postMessage({ language: language })
+  };
+
   const handleDocChange = (state) => {
-    const val = state.doc.toString()
-    setDocValue(val)
+    const val = state.doc.toString();
+    setDocValue(val);
 
     const editor = aceEditor.current || undefined;
     if (editor) {
@@ -37,25 +41,38 @@ function Editor({ ace, initialDoc, discardButton, languageMode }) {
     }
   };
 
-  const [refContainer, editorView] = useCodeMirror({ initialDoc: docValue, onChange: handleDocChange, userTheme: userConfig.theme, languageMode: languageMode })
+  const [refContainer, editorView] = useCodeMirror({
+    initialDoc: docValue,
+    onChange: handleDocChange,
+    userTheme: userConfig.theme,
+    languageMode: languageMode,
+    setLanguageConfig: setLanguageConfig,
+  });
 
   useEffect(() => {
     if (!discardButton || !editorView) return;
 
     const handleDiscard = (event) => {
       editorView.dispatch({
-        changes: { from: 0, to: editorView.state.doc.length, insert: initialDoc },
+        changes: {
+          from: 0,
+          to: editorView.state.doc.length,
+          insert: initialDoc,
+        },
       });
       setDocValue(initialDoc);
-    }
+    };
 
     discardButton.addEventListener("click", handleDiscard);
     return () => discardButton.removeEventListener("click", handleDiscard);
   }, [discardButton, editorView, initialDoc]);
 
   return (
-    <div className="codemirror-editor-wrapper" ref={refContainer} style={size}>
-    </div>
+    <div
+      className="codemirror-editor-wrapper"
+      ref={refContainer}
+      style={size}
+    ></div>
   );
 }
 

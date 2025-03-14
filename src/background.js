@@ -1,6 +1,6 @@
 const USER_CONFIG = {
   isEnabled: true,
-  language: "python",
+  language: "xml",
   theme: "basic-light",
   fontSize: 12,
 };

@@ -1,7 +1,8 @@
 const USER_CONFIG = {
-  isEnabled: false,
+  isEnabled: true,
+  language: "python",
   theme: "basic-light",
-  fontSize: 11,
+  fontSize: 12,
 };
 
 chrome.runtime.onInstalled.addListener(() => {

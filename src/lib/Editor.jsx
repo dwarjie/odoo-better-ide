@@ -14,6 +14,7 @@ function Editor({ ace, initialDoc, discardButton, languageMode }) {
       if (event.data.isConfig) {
         const config = {
           isEnabled: event.data.isEnabled,
+          language: event.data.language,
           theme: event.data.theme,
           fontSize: event.data.fontSize,
         };

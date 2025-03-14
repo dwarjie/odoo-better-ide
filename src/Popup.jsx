@@ -72,6 +72,18 @@ function Popup() {
       </div>
 
       <div className="setting-item">
+        <label htmlFor="language">Language:</label>
+        <select
+          id="language"
+          value={userConfig.python}
+          // onChange={(e) => handleThemeChange(e)}
+        >
+          <option value="python">Python</option>
+          <option value="xml">XML</option>
+        </select>
+      </div>
+
+      <div className="setting-item">
         <label htmlFor="theme">IDE Theme:</label>
         <select
           id="theme"
@@ -104,6 +116,7 @@ function Popup() {
 
       <div className="status-preview">
         <p>Extension is {userConfig.isEnabled ? "Enabled" : "Disabled"}</p>
+        <p>Language: {userConfig.language}</p>
         <p>Current Theme: {userConfig.theme}</p>
         <p>Font Size: {userConfig.fontSize}px</p>
       </div>

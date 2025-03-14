@@ -54,7 +54,7 @@ function Editor({ ace, initialDoc, discardButton, languageMode }) {
   }, [discardButton, editorView, initialDoc]);
 
   return (
-    <div className="editor-wrapper" ref={refContainer} style={size}>
+    <div className="codemirror-editor-wrapper" ref={refContainer} style={size}>
     </div>
   );
 }

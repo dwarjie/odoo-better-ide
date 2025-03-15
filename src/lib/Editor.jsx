@@ -48,7 +48,6 @@ function Editor({ ace, initialDoc, discardButton }) {
         language = python;
     }
     window.postMessage({ language: userConfig.language });
-    setUserConfig({ ...userConfig, language: language });
 
     return view.dispatch({
       effects: languageConfig.reconfigure(language()),
@@ -101,10 +100,6 @@ function Editor({ ace, initialDoc, discardButton }) {
         ref={refContainer}
         style={size}
       ></div>
-      <button
-      >
-        Python
-      </button>
     </>
   );
 }

@@ -7,12 +7,10 @@ import { getOdooVersion } from "./getObserverConfig";
  **/
 const getLanguageMode = (aceEditor, odooVersion) => {
   const convertedVersion = getOdooVersion(odooVersion);
-  let language = "xml";
   if (convertedVersion > 17) {
-    language = aceEditor.dataset.mode || "xml";
+    const language = aceEditor.dataset.mode || "xml";
+    return window.postMessage({ language: language });
   }
-
-  return window.postMessage({ language: language });
 };
 
 export { getLanguageMode };

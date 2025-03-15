@@ -1,12 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import { setEditorValue } from "../../utils/aceHelper";
+import { Compartment } from "@codemirror/state";
+import { python } from "@codemirror/lang-python";
+import { xml } from "@codemirror/lang-xml";
 import useCodeMirror from "../../utils/useCodeMirror";
 import "../index.css";
 
-function Editor({ ace, initialDoc, discardButton, languageMode }) {
+function Editor({ ace, initialDoc, discardButton }) {
   const aceEditor = useRef(ace);
   const [docValue, setDocValue] = useState(initialDoc);
   const [userConfig, setUserConfig] = useState({});
+  const [editorView, setEditorView] = useState(null)
+  const languageConfig = new Compartment();
+  const themeConfig = new Compartment();
   const size = { fontSize: `${userConfig.fontSize}px` };
 
   useEffect(() => {
@@ -27,8 +33,26 @@ function Editor({ ace, initialDoc, discardButton, languageMode }) {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  const setLanguageConfig = (language) => {
-    window.postMessage({ language: language })
+  const setLanguageMode = (view) => {
+    let language = null;
+
+    switch (userConfig.language) {
+      case "qweb":
+      case "xml":
+        language = xml;
+        break;
+      case "python":
+        language = python;
+        break;
+      default:
+        language = python;
+    }
+    window.postMessage({ language: userConfig.language });
+    setUserConfig({ ...userConfig, language: language });
+
+    return view.dispatch({
+      effects: languageConfig.reconfigure(language()),
+    });
   };
 
   const handleDocChange = (state) => {
@@ -41,12 +65,15 @@ function Editor({ ace, initialDoc, discardButton, languageMode }) {
     }
   };
 
-  const [refContainer, editorView] = useCodeMirror({
+  const [refContainer] = useCodeMirror({
     initialDoc: docValue,
     onChange: handleDocChange,
     userTheme: userConfig.theme,
-    languageMode: languageMode,
-    setLanguageConfig: setLanguageConfig,
+    setLanguageMode,
+    editorView,
+    setEditorView,
+    languageConfig,
+    themeConfig
   });
 
   useEffect(() => {
@@ -68,11 +95,17 @@ function Editor({ ace, initialDoc, discardButton, languageMode }) {
   }, [discardButton, editorView, initialDoc]);
 
   return (
-    <div
-      className="codemirror-editor-wrapper"
-      ref={refContainer}
-      style={size}
-    ></div>
+    <>
+      <div
+        className="codemirror-editor-wrapper"
+        ref={refContainer}
+        style={size}
+      ></div>
+      <button
+      >
+        Python
+      </button>
+    </>
   );
 }
 

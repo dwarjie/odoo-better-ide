@@ -4,6 +4,7 @@ import { getEditorValue } from "../../utils/aceHelper";
 import { getObserverConfig } from "../../utils/getObserverConfig";
 import Editor from "./Editor";
 import "../index.css";
+import { getLanguageMode } from "../../utils/getLanguageMode";
 
 let odooVersion = window.odoo.info.server_version_info[0];
 let observerConfig = getObserverConfig(odooVersion);
@@ -18,7 +19,7 @@ if (odooVersion) {
     const discardButton = document.querySelector("button.o_form_button_cancel");
 
     if (codeMirrorWrapper && aceEditor) {
-      let languageMode = aceEditor.dataset.mode || "xml";
+      getLanguageMode(aceEditor, odooVersion);
       aceEditor.style = `display: none;`;
       const editor = aceEditor || `print("Hello")`;
       let value = getEditorValue(editor);
@@ -29,7 +30,6 @@ if (odooVersion) {
             ace={aceEditor}
             initialDoc={value}
             discardButton={discardButton}
-            languageMode={languageMode}
           />
         </StrictMode>,
       );

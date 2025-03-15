@@ -3,9 +3,7 @@ import { EditorView, keymap } from "@codemirror/view";
 import { basicSetup } from "codemirror";
 import { indentWithTab, historyKeymap } from "@codemirror/commands";
 import { indentUnit } from "@codemirror/language";
-import { python } from "@codemirror/lang-python";
 import { xml, autoCloseTags } from "@codemirror/lang-xml";
-import { Compartment } from "@codemirror/state";
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 // themes
 import { oneDark } from "@codemirror/theme-one-dark";
@@ -18,13 +16,12 @@ const useCodeMirror = ({
   initialDoc,
   onChange,
   userTheme,
-  languageMode,
-  setLanguageConfig,
+  setLanguageMode,
+  setEditorView,
+  languageConfig,
+  themeConfig,
 }) => {
   const refContainer = useRef(null);
-  const [editorView, setEditorView] = useState(null);
-  const themeConfig = new Compartment();
-  const languageConfig = new Compartment();
 
   const getTheme = () => {
     let theme = null;
@@ -46,26 +43,6 @@ const useCodeMirror = ({
     }
 
     return theme;
-  };
-
-  const setLanguageMode = (view) => {
-    let language = null;
-
-    switch (languageMode) {
-      case "qweb":
-      case "xml":
-        language = xml;
-        break;
-      case "python":
-        language = python;
-        break;
-      default:
-        language = python;
-    }
-    setLanguageConfig(languageMode);
-    return view.dispatch({
-      effects: languageConfig.reconfigure(language()),
-    });
   };
 
   useEffect(() => {
@@ -91,11 +68,11 @@ const useCodeMirror = ({
       parent: refContainer.current,
     });
 
-    setLanguageMode(view);
     setEditorView(view);
+    setLanguageMode(view);
   }, [refContainer, userTheme]);
 
-  return [refContainer, editorView];
+  return [refContainer];
 };
 
 export default useCodeMirror;

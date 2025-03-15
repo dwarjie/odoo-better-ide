@@ -36,6 +36,16 @@ function Popup() {
     });
   };
 
+  const handleLanguageChange = (e) => {
+    const newValue = e.target.value;
+
+    saveConfig({ language: newValue });
+    setUserConfig({
+      ...userConfig,
+      language: newValue,
+    });
+  };
+
   const handleFontSizeChange = (e) => {
     const newValue = e.target.value;
 
@@ -72,6 +82,19 @@ function Popup() {
       </div>
 
       <div className="setting-item">
+        <label htmlFor="language">Language:</label>
+        <select
+          id="language"
+          value={userConfig.language}
+          onChange={(e) => handleLanguageChange(e)}
+        >
+          <option value="python">Python</option>
+          <option value="xml">XML</option>
+          <option value="qweb">Qweb</option>
+        </select>
+      </div>
+
+      <div className="setting-item">
         <label htmlFor="theme">IDE Theme:</label>
         <select
           id="theme"
@@ -104,6 +127,7 @@ function Popup() {
 
       <div className="status-preview">
         <p>Extension is {userConfig.isEnabled ? "Enabled" : "Disabled"}</p>
+        <p>Language: {userConfig.language}</p>
         <p>Current Theme: {userConfig.theme}</p>
         <p>Font Size: {userConfig.fontSize}px</p>
       </div>

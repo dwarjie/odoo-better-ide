@@ -3,9 +3,7 @@ import { EditorView, keymap } from "@codemirror/view";
 import { basicSetup } from "codemirror";
 import { indentWithTab, historyKeymap } from "@codemirror/commands";
 import { indentUnit } from "@codemirror/language";
-import { python } from "@codemirror/lang-python";
 import { xml, autoCloseTags } from "@codemirror/lang-xml";
-import { Compartment } from "@codemirror/state";
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 // themes
 import { oneDark } from "@codemirror/theme-one-dark";
@@ -14,11 +12,16 @@ import { materialLight } from "@fsegurai/codemirror-theme-material-light";
 import { monokai } from "@fsegurai/codemirror-theme-monokai";
 import { basicLight } from "@fsegurai/codemirror-theme-basic-light";
 
-const useCodeMirror = ({ initialDoc, onChange, userTheme, languageMode }) => {
+const useCodeMirror = ({
+  initialDoc,
+  onChange,
+  userTheme,
+  setLanguageMode,
+  setEditorView,
+  languageConfig,
+  themeConfig,
+}) => {
   const refContainer = useRef(null);
-  const [editorView, setEditorView] = useState(null);
-  const themeConfig = new Compartment();
-  const languageConfig = new Compartment();
 
   const getTheme = () => {
     let theme = null;
@@ -42,22 +45,6 @@ const useCodeMirror = ({ initialDoc, onChange, userTheme, languageMode }) => {
     return theme;
   };
 
-  const setLanguageMode = (view) => {
-    let language = null;
-
-    switch (languageMode) {
-      case "qweb":
-      case "xml":
-        language = xml;
-        break;
-      default:
-        language = python;
-    }
-    return view.dispatch({
-      effects: languageConfig.reconfigure(language()),
-    });
-  };
-
   useEffect(() => {
     if (!refContainer.current || !userTheme) return;
 
@@ -68,7 +55,7 @@ const useCodeMirror = ({ initialDoc, onChange, userTheme, languageMode }) => {
         basicSetup,
         indentUnit.of("    "),
         keymap.of([indentWithTab, historyKeymap]),
-        languageConfig.of(python()),
+        languageConfig.of(xml()),
         indentationMarkers(),
         EditorView.updateListener.of((update) => {
           if (update.changes) {
@@ -81,11 +68,11 @@ const useCodeMirror = ({ initialDoc, onChange, userTheme, languageMode }) => {
       parent: refContainer.current,
     });
 
-    setLanguageMode(view);
     setEditorView(view);
+    setLanguageMode(view);
   }, [refContainer, userTheme]);
 
-  return [refContainer, editorView];
+  return [refContainer];
 };
 
 export default useCodeMirror;

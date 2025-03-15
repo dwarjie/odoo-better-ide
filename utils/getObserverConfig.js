@@ -1,9 +1,10 @@
+/**
+ * Get the appropriate MutationObserver config based on Odoo's version
+ * @param {string | number} odooVersion - The version of Odoo. Can be a string (e.g., saas~18) for demo.odoo.com
+ * @returns {object} MutationObserver.observe() config
+ **/
 const getObserverConfig = (odooVersion) => {
-  // make sure to only get the number version since demo.odoo.com has "saas~xx"
-  if (typeof odooVersion == "string") {
-    let strVersion = odooVersion;
-    odooVersion = strVersion.replace(/\D/g, "");
-  }
+  odooVersion = getOdooVersion(odooVersion);
 
   if (odooVersion > 17)
     return {
@@ -17,4 +18,15 @@ const getObserverConfig = (odooVersion) => {
   };
 };
 
-export { getObserverConfig };
+const getOdooVersion = (version) => {
+  if (typeof version == "string") {
+    let strVersion = version;
+    version = strVersion.replace(/\D/g, "");
+
+    return version;
+  }
+
+  return version;
+};
+
+export { getObserverConfig, getOdooVersion };

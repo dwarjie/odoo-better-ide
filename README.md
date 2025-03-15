@@ -33,11 +33,11 @@ Key Features:
 1. [x] **Enhanced Code Editor:** Add a modern editor with Intellisense and Autocompletion using CodeMirror 6.
 2. [x] **Real-Time Syncing:** Sync code from CodeMirror to Odoo editor (in the background).
 3. [x] **Customizations:** Allow theme, font size.
-4. [x] **Multi-language support:** Supports Python, XML, JavaScript, HTML, CSS (supports Python for now).
-5. [ ] **Enabled by default:** Automatically embed the CodeMirror editor to the page when enabled (need to reload the browser for now).
+4. [x] **Multi-language support:** Supports Python, XML.
+5. [x] **Enabled by default:** Automatically embed the CodeMirror editor to the page when enabled.
 6. [x] **Handle Odoo Discard:** Revert code when user clicked the discard button. (thanks to [acgonzales](https://github.com/acgonzales) )
 6. [ ] **Vim Keybinds:** Use Vim-like keybinding.
-4. [ ] **Support Editor:** Supports JavaScript, HTML, and CSS for modifying the website.
+4. [ ] **Qweb Intellisense:** Support intellisense and code completion for Qweb.
 
 ### Technologies:
 1. **CodeMirror 6:** A versatile text editor implemented in JavaScript for browsers.

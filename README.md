@@ -13,18 +13,23 @@
 Tired of the plain Odoo code editor? Say hello to **Odoo Better IDE**, the ultimate extension designed to take your coding experience to the next level! 🎉
 
 ### **Features That Code Like Magic:**
-✨ **Modern Code Editor**: Experience the power of **CodeMirror 6** with IntelliSense, autocompletion, and an overall sleek interface.  
-✨ **Real-Time Syncing**: Seamlessly sync your edits from our enhanced editor to the Odoo editor in real time—no manual hassle.  
-✨ **Full Customization**: Make it yours! Choose from stunning themes and adjust font sizes for your perfect coding environment.  
-✨ **Find & Replace**: Integrated VSCode like-Find & Replace.  
+✨ **Modern Code Editor**: Experience the power of **CodeMirror 6** with IntelliSense, autocompletion, and an overall sleek interface.
+✨ **Real-Time Syncing**: Seamlessly sync your edits from our enhanced editor to the Odoo editor in real time—no manual hassle.
+✨ **Full Customization**: Make it yours! Choose from stunning themes and adjust font sizes for your perfect coding environment.
+✨ **Find & Replace**: Integrated VSCode like-Find & Replace.
 
 ### **Why You'll Love It:**
-✅ Effortless setup—just install and start coding!  
-✅ Boost productivity with faster, smarter coding tools.  
-✅ Stay in control with options tailored to your style.  
+✅ Effortless setup—just install and start coding!
+✅ Boost productivity with faster, smarter coding tools.
+✅ Stay in control with options tailored to your style.
 
-### **Unleash Your Coding Superpowers!**  
+### **Unleash Your Coding Superpowers!**
 Transform your Odoo development workflow today with **Odoo Code Booster**. Because coding doesn’t have to be boring. 🌟
+
+### How to Use:
+1. Install the Extension.
+2. Select your preferred theme and font size.
+3. Navigate to any Odoo Views where you can modify Python, XML, or Qweb. If Odoo-Better-IDE is enabled, the extension will automatically change the Odoo IDE.
 
 ## Author's Note
 This project aims to enhance Odoo's in-browser code editor for Scheduled Actions by overlaying a **CodeMirror editor** with advanced features such as IntelliSense, syntax highlighting, and visual customization.
@@ -36,8 +41,9 @@ Key Features:
 4. [x] **Multi-language support:** Supports Python, XML.
 5. [x] **Enabled by default:** Automatically embed the CodeMirror editor to the page when enabled.
 6. [x] **Handle Odoo Discard:** Revert code when user clicked the discard button. (thanks to [acgonzales](https://github.com/acgonzales) )
-6. [ ] **Vim Keybinds:** Use Vim-like keybinding.
-4. [ ] **Qweb Intellisense:** Support intellisense and code completion for Qweb.
+7. [ ] **Vim Keybinds:** Use Vim-like keybinding.
+8. [ ] **Qweb Intellisense:** Support intellisense and code completion for Qweb.
+
 
 ### Technologies:
 1. **CodeMirror 6:** A versatile text editor implemented in JavaScript for browsers.

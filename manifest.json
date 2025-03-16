@@ -22,5 +22,5 @@
       "js": ["src/loader.js"]
     }
   ],
-  "permissions": ["activeTab", "storage"]
+  "permissions": ["storage"]
 }

@@ -13,10 +13,10 @@
 Tired of the plain Odoo code editor? Say hello to **Odoo Better IDE**, the ultimate extension designed to take your coding experience to the next level! 🎉
 
 ### **Features That Code Like Magic:**
-✨ **Modern Code Editor**: Experience the power of **CodeMirror 6** with IntelliSense, autocompletion, and an overall sleek interface.
-✨ **Real-Time Syncing**: Seamlessly sync your edits from our enhanced editor to the Odoo editor in real time—no manual hassle.
-✨ **Full Customization**: Make it yours! Choose from stunning themes and adjust font sizes for your perfect coding environment.
-✨ **Find & Replace**: Integrated VSCode like-Find & Replace.
+1. ✨ **Modern Code Editor**: Experience the power of **CodeMirror 6** with IntelliSense, autocompletion, and an overall sleek interface.
+2. ✨ **Real-Time Syncing**: Seamlessly sync your edits from our enhanced editor to the Odoo editor in real time—no manual hassle.
+3. ✨ **Full Customization**: Make it yours! Choose from stunning themes and adjust font sizes for your perfect coding environment.
+4. ✨ **Find & Replace**: Integrated VSCode like-Find & Replace.
 
 ### **Why You'll Love It:**
 ✅ Effortless setup—just install and start coding!

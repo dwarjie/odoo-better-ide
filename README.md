@@ -19,9 +19,9 @@ Tired of the plain Odoo code editor? Say hello to **Odoo Better IDE**, the ultim
 4. ✨ **Find & Replace**: Integrated VSCode like-Find & Replace.
 
 ### **Why You'll Love It:**
-✅ Effortless setup—just install and start coding!
-✅ Boost productivity with faster, smarter coding tools.
-✅ Stay in control with options tailored to your style.
+- ✅ Effortless setup—just install and start coding!
+- ✅ Boost productivity with faster, smarter coding tools.
+- ✅ Stay in control with options tailored to your style.
 
 ### **Unleash Your Coding Superpowers!**
 Transform your Odoo development workflow today with **Odoo Code Booster**. Because coding doesn’t have to be boring. 🌟

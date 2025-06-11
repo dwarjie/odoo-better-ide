@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Odoo Better Ide",
   "description": "Enhance Odoo Code Editor with Modern Code Editor, Code Completion, Intellisense, and Full Customization with Font Size and Themes!",
-  "version": "1.2.1",
+  "version": "1.2.5",
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",

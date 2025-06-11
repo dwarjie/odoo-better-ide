@@ -6,10 +6,15 @@ import Editor from "./Editor";
 import "../index.css";
 import { getLanguageMode } from "../../utils/getLanguageMode";
 
-let odooVersion = window.odoo.info.server_version_info[0];
-let observerConfig = getObserverConfig(odooVersion);
-
+let odooVersion = window.odoo?.info?.server_version_info[0];
+/** 
+ * Accessing the window.odoo.info in the Odoo Website Module will return an error
+ * since the info.server_version_info does not exist. We need to check first to prevent
+ * having an error
+**/
 if (odooVersion) {
+  let observerConfig = getObserverConfig(odooVersion);
+  console.log(observerConfig)
   const observer = new MutationObserver((mutationRecord) => {
     let aceEditor = document.querySelector(".ace_editor");
     let codeMirror = document.querySelector(".codemirror-editor-wrapper");

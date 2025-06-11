@@ -14,7 +14,6 @@ let odooVersion = window.odoo?.info?.server_version_info[0];
 **/
 if (odooVersion) {
   let observerConfig = getObserverConfig(odooVersion);
-  console.log(observerConfig)
   const observer = new MutationObserver((mutationRecord) => {
     let aceEditor = document.querySelector(".ace_editor");
     let codeMirror = document.querySelector(".codemirror-editor-wrapper");

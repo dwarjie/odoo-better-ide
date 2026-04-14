@@ -7,19 +7,24 @@ export default defineManifest({
 		"Enhance Odoo Code Editor with Modern Code Editor, Code Completion, Intellisense, and Full Customization with Font Size and Themes!",
 	version: "1.3.0",
 	icons: {
-		48: "public/logo.png",
+		16: "images/icon-16.png",
+		32: "images/icon-32.png",
+		48: "images/icon-48.png",
+		128: "images/icon-128.png",
+	},
+	background: {
+		service_worker: "src/background/index.ts",
+		type: "module",
 	},
 	action: {
-		default_icon: {
-			48: "public/logo.png",
-		},
 		default_popup: "src/popup/index.html",
 	},
-	permissions: ["storage"],
+	permissions: ["storage", "scripting"],
 	content_scripts: [
 		{
 			js: ["src/content/main.tsx"],
 			matches: ["https://*/*"],
 		},
 	],
+	host_permissions: ["https://*/*"],
 });

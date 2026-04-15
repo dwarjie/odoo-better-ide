@@ -45,7 +45,6 @@ function processMessage(requestType: string): unknown {
 			return { version: null };
 		}
 
-		console.log(info);
 		const versionArray = info.server_version_info;
 
 		if (!Array.isArray(versionArray) || versionArray.length === 0) {
@@ -72,7 +71,7 @@ function processMessage(requestType: string): unknown {
 				throw new Error(`Invalid request type: ${requestType}`);
 		}
 	} catch (error) {
-		console.log(error);
+		console.log("[LOG]", error);
 		return error;
 	}
 }

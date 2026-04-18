@@ -1,3 +1,4 @@
+import { aceService } from "@/services/Ace.service";
 import { odooService } from "@/services/Odoo.service";
 import { OdooVersion } from "@/types";
 
@@ -18,40 +19,26 @@ const observerOdoo = (odooVersion: number): void => {
 	 */
 	if (odooVersion < 15) return;
 
-	const CONFIG: MutationObserverInit = {
-		childList: true,
-		subtree: true,
-		attributes: true,
-		attributeFilter: ["class"],
-	};
 	const TARGET_NODE = document.querySelector("body");
 	if (!TARGET_NODE) return;
 
-	const callback: MutationCallback = (mutationList) => {
-		for (const mutationRecord of mutationList) {
-			if (
-				mutationRecord.type == "attributes" &&
-				mutationRecord.attributeName == "class"
-			) {
-				const mutationTarget = mutationRecord.target as HTMLElement;
-				if (!mutationTarget) continue;
+	const callback: MutationCallback = async (mutationList) => {
+		const aceEditors = document.querySelectorAll(".ace_editor");
+		console.log(aceEditors);
 
-				const targetClassList = mutationTarget.classList;
-				if (!targetClassList) continue;
-
-				if (targetClassList.contains("ace_editor")) {
-					console.log("Ace Editor", mutationTarget);
-				}
-
-				if (targetClassList.contains("ace_line")) {
-					console.log("Ace Line", mutationTarget);
-				}
-			}
+		for (const editor of aceEditors) {
+			const currentEditorContent = await aceService.getAceEditor(
+				editor as HTMLElement,
+			);
+			console.log(currentEditorContent);
 		}
 	};
 
 	const mutationObserver = new MutationObserver(callback);
-	mutationObserver.observe(TARGET_NODE, CONFIG);
+	mutationObserver.observe(TARGET_NODE, {
+		childList: true,
+		subtree: true,
+	});
 };
 
 const watchOdooPage = async (): Promise<void> => {
@@ -63,11 +50,3 @@ const watchOdooPage = async (): Promise<void> => {
 };
 
 watchOdooPage();
-// const container = document.createElement("div");
-// container.id = "odoo-better-ide";
-// document.body.appendChild(container);
-// createRoot(container).render(
-// 	<StrictMode>
-// 		<Loader />
-// 	</StrictMode>,
-// );

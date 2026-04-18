@@ -2,7 +2,7 @@ import { OdooVersion } from "@/types";
 import browser from "webextension-polyfill";
 
 export async function handleBrowserMessage(
-	request: { requestType: string },
+	request: { requestType: string; params?: unknown },
 	sender: browser.Runtime.MessageSender,
 	sendResponse: (response: unknown) => void,
 ) {
@@ -11,11 +11,12 @@ export async function handleBrowserMessage(
 			throw new Error("Cannot retrieve the Sender Tab ID.");
 		}
 
+		console.log("Params", request.params);
 		const [{ result }] = await browser.scripting.executeScript({
 			target: { tabId: sender.tab.id, allFrames: true },
 			func: processMessage,
 			world: "MAIN",
-			args: [request.requestType],
+			args: [request.requestType, request.params ?? null],
 		});
 
 		sendResponse(result);
@@ -24,7 +25,7 @@ export async function handleBrowserMessage(
 	}
 }
 
-function processMessage(requestType: string): unknown {
+function processMessage(requestType: string, params?: unknown | null): unknown {
 	function getOdooVersion(): OdooVersion {
 		if (typeof window === "undefined") {
 			console.error("window object is not accessible");
@@ -63,10 +64,33 @@ function processMessage(requestType: string): unknown {
 		};
 	}
 
+	function getAceEditor(element: HTMLElement): AceAjax.Editor | null {
+		if (!element) return null;
+
+		const aceGlobal: AceAjax.Ace | undefined = (window as any)?.ace;
+		if (!aceGlobal) {
+			console.error("Cannot access window.ace");
+			return null;
+		}
+
+		try {
+			return aceGlobal.edit(element);
+		} catch (error) {
+			console.error("Cannot access Ace Editor", error);
+			return null;
+		}
+	}
+
 	try {
 		switch (requestType) {
 			case "GET_ODOO_VERSION":
 				return getOdooVersion();
+			case "GET_ACE_EDITOR":
+				if (!params || typeof params !== "object") {
+					throw new Error(`Invalid element to access Ace Editor: ${params}`);
+				}
+
+				return getAceEditor(params as HTMLElement);
 			default:
 				throw new Error(`Invalid request type: ${requestType}`);
 		}

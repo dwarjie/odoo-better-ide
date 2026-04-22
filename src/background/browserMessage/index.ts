@@ -64,8 +64,8 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 		};
 	}
 
-	function getAceEditor(element: HTMLElement): AceAjax.Editor | null {
-		if (!element) return null;
+	function getAceEditor(uniqueId: string): string | null {
+		if (!uniqueId) return null;
 
 		const aceGlobal: AceAjax.Ace | undefined = (window as any)?.ace;
 		if (!aceGlobal) {
@@ -74,7 +74,10 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 		}
 
 		try {
-			return aceGlobal.edit(element);
+			const element = document.querySelector(`[data-odoo-id="${uniqueId}"]`);
+			const ace = aceGlobal.edit(element as HTMLElement);
+
+			return ace.getValue();
 		} catch (error) {
 			console.error("Cannot access Ace Editor", error);
 			return null;
@@ -85,12 +88,12 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 		switch (requestType) {
 			case "GET_ODOO_VERSION":
 				return getOdooVersion();
-			case "GET_ACE_EDITOR":
-				if (!params || typeof params !== "object") {
+			case "GET_ACE_VALUE":
+				if (!params || typeof params !== "string") {
 					throw new Error(`Invalid element to access Ace Editor: ${params}`);
 				}
 
-				return getAceEditor(params as HTMLElement);
+				return getAceEditor(params);
 			default:
 				throw new Error(`Invalid request type: ${requestType}`);
 		}

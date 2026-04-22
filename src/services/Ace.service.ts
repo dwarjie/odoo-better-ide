@@ -26,18 +26,36 @@ export class AceService {
 		return result;
 	}
 
-	async getAceEditor(element: HTMLElement): Promise<AceAjax.Editor | null> {
-		console.log("Element", element);
+	async getAceValue(uniqueId: string): Promise<string | null> {
 		try {
-			const aceEditor = await this.sendBrowserMessage(
-				"GET_ACE_EDITOR",
-				element,
-			);
-			return aceEditor as AceAjax.Editor;
+			const aceValue = await this.sendBrowserMessage("GET_ACE_VALUE", uniqueId);
+			return aceValue as string;
 		} catch (error) {
 			Logger.error("Failed to get Ace Editor", error);
 			return null;
 		}
+	}
+
+	setUniqueId(element: HTMLElement): string {
+		if (!element || !element.classList.contains("ace_editor")) {
+			throw new Error("No element provided or wrong element.");
+		}
+
+		const uniqueId = `odoo-ace-${Math.random().toString(36).slice(2)}`;
+		element.setAttribute("data-odoo-id", uniqueId);
+
+		return uniqueId;
+	}
+
+	getUniqueId(element: HTMLElement): string | null {
+		if (!element || !element.classList.contains("ace_editor")) {
+			throw new Error("No element provided or wrong element.");
+		}
+
+		const uniqueId = element.getAttribute("data-odoo-id");
+		if (!uniqueId) return null;
+
+		return uniqueId;
 	}
 }
 

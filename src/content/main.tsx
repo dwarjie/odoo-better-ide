@@ -1,6 +1,7 @@
 import { aceService } from "@/services/Ace.service";
 import { odooService } from "@/services/Odoo.service";
 import { OdooVersion } from "@/types";
+import loader from "./loader";
 
 const getOdooVersion = async (): Promise<OdooVersion> => {
 	const result = await odooService.getOdooVersion();
@@ -27,10 +28,15 @@ const observerOdoo = (odooVersion: number): void => {
 		console.log(aceEditors);
 
 		for (const editor of aceEditors) {
-			const currentEditorContent = await aceService.getAceEditor(
-				editor as HTMLElement,
-			);
-			console.log(currentEditorContent);
+			try {
+				const uniqueId = aceService.getUniqueId(editor as HTMLElement);
+				if (uniqueId) continue;
+
+				const newId = aceService.setUniqueId(editor as HTMLElement);
+				loader(editor as HTMLElement, newId);
+			} catch (error) {
+				return error;
+			}
 		}
 	};
 

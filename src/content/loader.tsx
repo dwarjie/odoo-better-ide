@@ -1,32 +1,21 @@
-import { odooService } from "@/services/Odoo.service";
-import { OdooVersion } from "@/types";
-import { useEffect, useState } from "react";
+import { Logger } from "@/services/Logger.service";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 import CodeMirror from "./views/codemirror/CodeMirror";
 
-export function Loader() {
-	const [odooVersion, setOdooVersion] = useState<OdooVersion | null>(null);
+export default function loader(element: HTMLElement, uniqueId: string): void {
+	if (!element || !uniqueId) {
+		Logger.error("No element or uniqueId provided in the loader.");
+		return;
+	}
 
-	useEffect(() => {
-		const getOdooVersion = async (): Promise<OdooVersion | null> => {
-			const result = await odooService.getOdooVersion();
-			if (!result?.version) return null;
+	const codeMirrorWrapper = document.createElement("div");
+	codeMirrorWrapper.id = `code-mirror-${uniqueId}`;
+	element.insertAdjacentElement("afterend", codeMirrorWrapper);
 
-			return result;
-		};
-
-		const initialize = async () => {
-			const version = await getOdooVersion();
-			setOdooVersion(version);
-		};
-
-		initialize();
-	}, []);
-
-	if (!odooVersion) return;
-
-	return (
-		<>
-			<CodeMirror />
-		</>
+	createRoot(codeMirrorWrapper).render(
+		<StrictMode>
+			<CodeMirror aceEditor={element} uniqueId={uniqueId} />
+		</StrictMode>,
 	);
 }

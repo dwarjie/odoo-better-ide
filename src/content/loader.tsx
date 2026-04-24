@@ -9,13 +9,17 @@ export default function loader(element: HTMLElement, uniqueId: string): void {
 		return;
 	}
 
+	if (document.querySelector(`#code-mirror-${uniqueId}`)) {
+		return;
+	}
+
 	const codeMirrorWrapper = document.createElement("div");
 	codeMirrorWrapper.id = `code-mirror-${uniqueId}`;
 	element.insertAdjacentElement("afterend", codeMirrorWrapper);
 
 	createRoot(codeMirrorWrapper).render(
 		<StrictMode>
-			<CodeMirror aceEditor={element} uniqueId={uniqueId} />
+			<CodeMirror uniqueId={uniqueId} />
 		</StrictMode>,
 	);
 }

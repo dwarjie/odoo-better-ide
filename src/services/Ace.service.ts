@@ -36,6 +36,19 @@ export class AceService {
 		}
 	}
 
+	async subscribeToAceChanges(uniqueId: string): Promise<boolean> {
+		try {
+			const result = await this.sendBrowserMessage(
+				"SUBSCRIBE_ACE_CHANGES",
+				uniqueId,
+			);
+			return result as boolean;
+		} catch (error) {
+			Logger.error("Failed to subscribe to Ace Editor", error);
+			return false;
+		}
+	}
+
 	setUniqueId(element: HTMLElement): string {
 		if (!element || !element.classList.contains("ace_editor")) {
 			throw new Error("No element provided or wrong element.");

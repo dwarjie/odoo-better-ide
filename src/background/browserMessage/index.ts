@@ -84,6 +84,34 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 		}
 	}
 
+	function subscribeToAceChanges(uniqueId: string): boolean {
+		if (!uniqueId) return false;
+
+		const aceGlobal: AceAjax.Ace | undefined = (window as any)?.ace;
+		if (!aceGlobal) {
+			console.error("Cannot access window.ace");
+			return false;
+		}
+
+		try {
+			const element = document.querySelector(`[data-odoo-id="${uniqueId}"]`);
+			const ace = aceGlobal.edit(element as HTMLElement);
+
+			ace.session.on("change", () => {
+				window.postMessage({
+					type: "ACE_CHANGED",
+					id: uniqueId,
+					value: ace.getValue(),
+				});
+			});
+			console.log("Subscribed to Ace Editor changes", uniqueId);
+			return true;
+		} catch (error) {
+			console.error("Cannot access Ace Editor", error);
+			return false;
+		}
+	}
+
 	try {
 		switch (requestType) {
 			case "GET_ODOO_VERSION":
@@ -94,6 +122,12 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 				}
 
 				return getAceEditor(params);
+			case "SUBSCRIBE_ACE_CHANGES":
+				if (!params || typeof params !== "string") {
+					throw new Error(`Invalid element to subscribe Ace Editor: ${params}`);
+				}
+
+				return subscribeToAceChanges(params);
 			default:
 				throw new Error(`Invalid request type: ${requestType}`);
 		}

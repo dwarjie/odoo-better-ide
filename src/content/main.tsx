@@ -1,7 +1,7 @@
-import { aceService } from "@/services/Ace.service";
-import { odooService } from "@/services/Odoo.service";
-import { OdooVersion } from "@/types";
-import loader from "./loader";
+import { aceService } from '@/services/Ace.service';
+import { odooService } from '@/services/Odoo.service';
+import { OdooVersion } from '@/types';
+import loader from './loader';
 
 const getOdooVersion = async (): Promise<OdooVersion> => {
 	const result = await odooService.getOdooVersion();
@@ -14,17 +14,16 @@ const observerOdoo = (odooVersion: number): void => {
 	/*
 	 * Use MutationOberserver to observer Odoo Page and check
 	 * if an ace field exists in the page.
-	 * - For v-17.0+: Use data-mode for automatic detection of the language
-	 * - For v-15.0-16.0: Since data-mode does not exist, use python as xml
+	 * - For v-15.0+: Use ace editor to access the mode (language)
 	 * - For v-14.0-: Quick return (not supported)
 	 */
 	if (odooVersion < 15) return;
 
-	const TARGET_NODE = document.querySelector("body");
+	const TARGET_NODE = document.querySelector('body');
 	if (!TARGET_NODE) return;
 
 	const callback: MutationCallback = async (mutationList) => {
-		const aceEditors = document.querySelectorAll(".ace_editor");
+		const aceEditors = document.querySelectorAll('.ace_editor');
 
 		for (const editor of aceEditors) {
 			try {

@@ -1,5 +1,5 @@
-import { OdooVersion } from "@/types";
-import browser from "webextension-polyfill";
+import { OdooVersion } from '@/types';
+import browser from 'webextension-polyfill';
 
 /**
  * Handles the browser message from the content script and sends the response back to the content script
@@ -17,14 +17,14 @@ export async function handleBrowserMessage(
 ) {
 	try {
 		if (!sender?.tab?.id) {
-			throw new Error("Cannot retrieve the Sender Tab ID.");
+			throw new Error('Cannot retrieve the Sender Tab ID.');
 		}
 
-		console.log("Params", request.params);
+		console.log('Params', request.params);
 		const [{ result }] = await browser.scripting.executeScript({
 			target: { tabId: sender.tab.id, allFrames: true },
 			func: processMessage,
-			world: "MAIN",
+			world: 'MAIN',
 			args: [request.requestType, request.params ?? null],
 		});
 
@@ -53,21 +53,21 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 	 * @returns The Odoo major version
 	 */
 	function getOdooVersion(): OdooVersion {
-		if (typeof window === "undefined") {
-			console.error("window object is not accessible");
+		if (typeof window === 'undefined') {
+			console.error('window object is not accessible');
 			return { version: null };
 		}
 
 		const odoo = (window as any).odoo;
 		if (!odoo) {
-			console.warn("window.odoo is not accessible");
+			console.warn('window.odoo is not accessible');
 			return { version: null };
 		}
 
 		const info = odoo.info ?? odoo.session_info;
 		if (!info) {
 			console.warn(
-				"window.odoo.info or window.odoo.session_info is not accessible",
+				'window.odoo.info or window.odoo.session_info is not accessible',
 			);
 			return { version: null };
 		}
@@ -75,14 +75,14 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 		const versionArray = info.server_version_info;
 
 		if (!Array.isArray(versionArray) || versionArray.length === 0) {
-			console.warn("server_version_info property is empty", versionArray);
+			console.warn('server_version_info property is empty', versionArray);
 			return { version: null };
 		}
 
 		let majorVersion: number | string = versionArray[0];
-		if (typeof majorVersion == "string") {
+		if (typeof majorVersion == 'string') {
 			// Handle cases like "saas~16"
-			majorVersion = Number(majorVersion.replace(/^saas~/, ""));
+			majorVersion = Number(majorVersion.replace(/^saas~/, ''));
 		}
 
 		return {
@@ -102,7 +102,7 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 
 		const aceGlobal: AceAjax.Ace | undefined = (window as any)?.ace;
 		if (!aceGlobal) {
-			console.error("Cannot access window.ace");
+			console.error('Cannot access window.ace');
 			return null;
 		}
 
@@ -112,7 +112,7 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 
 			return ace.getValue();
 		} catch (error) {
-			console.error("Cannot access Ace Editor", error);
+			console.error('Cannot access Ace Editor', error);
 			return null;
 		}
 	}
@@ -157,7 +157,7 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 	 *
 	 * ---
 	 *
-	 * ## Ace → CodeMirror (user types in Ace)
+	 * ## Ace → CodeMirror (initialize the value from ace to codemirror)
 	 *
 	 * ```
 	 * MAIN World (Page)                                    Content Script
@@ -199,7 +199,7 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 
 		const aceGlobal: AceAjax.Ace | undefined = (window as any).ace;
 		if (!aceGlobal) {
-			console.error("[ACE BRIDGE] window.ace is not available");
+			console.error('[ACE BRIDGE] window.ace is not available');
 			return false;
 		}
 
@@ -209,7 +209,6 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 			return false;
 		}
 
-		// Prevent duplicate bridge initialization
 		if ((editor as any).__odoo_ide_bridge) {
 			console.warn(`[ACE BRIDGE] Bridge already initialized for id: ${id}`);
 			return true;
@@ -219,23 +218,23 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 
 		// Direction 1: Ace → CodeMirror
 		// Listen to Ace changes and postMessage to content script
-		editor.session.on("change", () => {
+		editor.session.on('change', () => {
 			if (isSyncingFromCodeMirror) return;
 
 			window.postMessage(
 				{
-					type: "ACE_CHANGED",
+					type: 'ACE_CHANGED',
 					id,
 					value: editor.getValue(),
 				},
-				"*",
+				'*',
 			);
 		});
 
 		// Direction 2: CodeMirror → Ace
 		// Listen for SET_ACE_VALUE from content script
 		const handleSetAceValue = (event: MessageEvent) => {
-			if (event.data?.type !== "SET_ACE_VALUE") return;
+			if (event.data?.type !== 'SET_ACE_VALUE') return;
 			if (event.data?.id !== id) return;
 
 			const newValue: string = event.data.value;
@@ -247,10 +246,9 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 			isSyncingFromCodeMirror = false;
 		};
 
-		window.addEventListener("message", handleSetAceValue);
+		window.addEventListener('message', handleSetAceValue);
 
 		(editor as any).__odoo_ide_bridge = true;
-		console.log(`[ACE BRIDGE] Initialized for id: ${id}`);
 		return true;
 	}
 
@@ -266,7 +264,7 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 
 		const aceGlobal: AceAjax.Ace | undefined = (window as any)?.ace;
 		if (!aceGlobal) {
-			console.error("Cannot access window.ace");
+			console.error('Cannot access window.ace');
 			return null;
 		}
 
@@ -274,39 +272,39 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 			const element = document.querySelector(`[data-odoo-id="${uniqueId}"]`);
 			const ace = aceGlobal.edit(element as HTMLElement);
 
-			const mode: string | null = ace.getOption("mode");
+			const mode: string | null = ace.getOption('mode');
 			if (!mode) return null;
 
 			function cleanAceModeString(mode: string): string {
-				return mode.replace("ace/mode/", "");
+				return mode.replace('ace/mode/', '');
 			}
 			const cleanMode = cleanAceModeString(mode);
 
 			return cleanMode;
 		} catch (error) {
-			console.error("Cannot access Ace Editor", error);
+			console.error('Cannot access Ace Editor', error);
 			return null;
 		}
 	}
 
 	try {
 		switch (requestType) {
-			case "GET_ODOO_VERSION":
+			case 'GET_ODOO_VERSION':
 				return getOdooVersion();
-			case "INIT_ACE_BRIDGE":
-				if (!params || typeof params !== "string") {
+			case 'INIT_ACE_BRIDGE':
+				if (!params || typeof params !== 'string') {
 					throw new Error(`Invalid element to access Ace Editor: ${params}`);
 				}
 
 				return initAceBridge(params);
-			case "GET_ACE_VALUE":
-				if (!params || typeof params !== "string") {
+			case 'GET_ACE_VALUE':
+				if (!params || typeof params !== 'string') {
 					throw new Error(`Invalid element to access Ace Editor: ${params}`);
 				}
 
 				return getAceEditor(params);
-			case "GET_ACE_MODE":
-				if (!params || typeof params !== "string") {
+			case 'GET_ACE_MODE':
+				if (!params || typeof params !== 'string') {
 					throw new Error(`Invalid element to access Ace Editor: ${params}`);
 				}
 
@@ -315,7 +313,7 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 				throw new Error(`Invalid request type: ${requestType}`);
 		}
 	} catch (error) {
-		console.log("[LOG]", error);
+		console.log('[LOG]', error);
 		return error;
 	}
 }

@@ -1,0 +1,21 @@
+@keyframes odoo-ide-spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+.odoo-ide-loading {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	margin-top: 8px;
+	font-family: monospace;
+	font-size: 13px;
+	color: #858585;
+	background: #1e1e1e;
+	border-radius: 4px;
+}
+
+.odoo-ide-loading__spinner {
+	animation: odoo-ide-spin 1s linear infinite;
+}

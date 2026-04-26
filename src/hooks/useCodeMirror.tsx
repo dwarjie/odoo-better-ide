@@ -1,11 +1,17 @@
-import React, { useCallback, useEffect, useRef } from "react";
-import { EditorView } from "@codemirror/view";
-import { EditorState } from "@codemirror/state";
-import { basicSetup } from "codemirror";
-import { Logger } from "@/services/Logger.service";
+import React, { useCallback, useEffect, useRef } from 'react';
+import { EditorView, keymap } from '@codemirror/view';
+import { EditorState } from '@codemirror/state';
+import { basicSetup } from 'codemirror';
+import { indentUnit } from '@codemirror/language';
+import { indentWithTab } from '@codemirror/commands';
+import { indentationMarkers } from '@replit/codemirror-indentation-markers';
+import { Logger } from '@/services/Logger.service';
+import useLanguageConfig from './useLanguageConfig';
+import { codeMirrorService } from '@/services/CodeMirror.service';
 
 interface Props {
 	initialDoc: string;
+	mode: string;
 	onChange?: (state: EditorState) => void;
 }
 
@@ -17,11 +23,17 @@ type UseCodeMirrorReturn<T extends Element> = [
 
 const useCodeMirror = <T extends Element>({
 	initialDoc,
+	mode,
 	onChange,
 }: Props): UseCodeMirrorReturn<T> => {
 	const refContainer = useRef<T | null>(null);
 	const [editorView, setEditorView] = React.useState<EditorView | null>(null);
 	const editorViewRef = useRef<EditorView | null>(null);
+
+	const { languageCompartment } = useLanguageConfig({
+		editorView,
+		mode,
+	});
 
 	useEffect(() => {
 		if (!refContainer.current) return;
@@ -30,26 +42,22 @@ const useCodeMirror = <T extends Element>({
 			doc: initialDoc,
 			extensions: [
 				basicSetup,
+				indentUnit.of('    '),
+				keymap.of([indentWithTab]),
+				languageCompartment.of(codeMirrorService.getLanguageMode(mode)),
+				indentationMarkers(),
 				EditorView.updateListener.of((update) => {
 					if (update.docChanged && onChange) {
-						onChange(update.state);
+						onChange && onChange(update.state);
 					}
 				}),
 			],
 		});
-		if (!state) {
-			Logger.error("Failed to create CodeMirror state");
-			return;
-		}
 
 		const view = new EditorView({
 			state,
 			parent: refContainer.current,
 		});
-		if (!view) {
-			Logger.error("Failed to create CodeMirror view");
-			return;
-		}
 
 		editorViewRef.current = view;
 		setEditorView(view);
@@ -61,23 +69,16 @@ const useCodeMirror = <T extends Element>({
 	}, [refContainer]);
 
 	const updateCodeMirrorContent = useCallback((content: string) => {
-		const editorView = editorViewRef.current;
-
-		if (!editorView) {
-			Logger.error("Editor view is not initialized");
+		const view = editorViewRef.current;
+		if (!view) {
+			Logger.error('Editor view is not initialized');
 			return;
 		}
 
-		const currentContent = editorView.state.doc.toString();
+		const currentContent = view.state.doc.toString();
 		if (currentContent === content) return;
 
-		editorView.dispatch({
-			changes: {
-				from: 0,
-				to: editorView.state.doc.length,
-				insert: content,
-			},
-		});
+		codeMirrorService.setValue(view, content);
 	}, []);
 
 	return [refContainer, editorView, updateCodeMirrorContent];

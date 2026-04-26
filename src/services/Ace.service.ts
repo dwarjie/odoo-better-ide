@@ -34,15 +34,12 @@ export class AceService {
 		}
 	}
 
-	async subscribeToAceChanges(uniqueId: string): Promise<boolean> {
+	async initBridge(uniqueId: string): Promise<boolean> {
 		try {
-			const result = await this.sendBrowserMessage(
-				"SUBSCRIBE_ACE_CHANGES",
-				uniqueId,
-			);
-			return result as boolean;
+			const result = await this.sendBrowserMessage("INIT_ACE_BRIDGE", uniqueId);
+			return result === true;
 		} catch (error) {
-			Logger.error("Failed to subscribe to Ace Editor", error);
+			Logger.error("Failed to initialize Ace bridge", error);
 			return false;
 		}
 	}

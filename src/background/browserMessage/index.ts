@@ -118,37 +118,140 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 	}
 
 	/**
-	 * Subscribes to the Ace Editor changes
-	 * Uses the unique ID to find the Ace Editor element
+	 * Initializes a two-way communication bridge between the Ace Editor (MAIN world)
+	 * and the CodeMirror editor (content script) for a specific editor instance.
 	 *
-	 * @param uniqueId - The unique ID of the Ace Editor
-	 * @returns True if the subscription is successful, false otherwise
+	 * This function runs in the MAIN world via `browser.scripting.executeScript`,
+	 * giving it direct access to `window.ace`.
+	 *
+	 * The bridge is marked on the Ace editor instance itself (`editor.__odoo_ide_bridge`).
+	 * Since `ace.edit(element)` always returns the same cached instance for the same element,
+	 * this guarantees the bridge is initialized exactly once per editor — even if
+	 * `initAceBridge` is called multiple times (e.g. due to MutationObserver re-firing).
+	 * Multiple Ace editors on the same page are handled independently since each has
+	 * its own instance with its own flag.
+	 *
+	 * @param id - The `data-odoo-id` attribute value used to locate the `.ace_editor` element.
+	 * @returns `true` if the bridge was successfully initialized or already exists, `false` on failure.
+	 *
+	 * ---
+	 *
+	 * ## Initialization Flow
+	 *
+	 * ```
+	 * Content Script                Background Script              MAIN World (Page)
+	 *      |                               |                              |
+	 *      |  aceService.initBridge(id)    |                              |
+	 *      |-----------------------------> |                              |
+	 *      |                               |  executeScript(             |
+	 *      |                               |    initAceBridge,           |
+	 *      |                               |    world: "MAIN"            |
+	 *      |                               |---------------------------> |
+	 *      |                               |                              |  ace.edit(element)
+	 *      |                               |                              |  editor.__odoo_ide_bridge = true
+	 *      |                               |                              |  session.on("change") registered
+	 *      |                               |                              |  window.on("message") registered
+	 *      |                               | <---------------------------|
+	 *      | <-----------------------------|                              |
+	 * ```
+	 *
+	 * ---
+	 *
+	 * ## Ace → CodeMirror (user types in Ace)
+	 *
+	 * ```
+	 * MAIN World (Page)                                    Content Script
+	 *      |                                                     |
+	 *      |  editor.session.on("change")                        |
+	 *      |  isSyncingFromCodeMirror === false                  |
+	 *      |                                                     |
+	 *      |  window.postMessage({ type: "ACE_CHANGED", id, value })
+	 *      |---------------------------------------------------> |
+	 *      |                                                     |  window.on("message")
+	 *      |                                                     |  updateContent(value)
+	 *      |                                                     |  CodeMirror.dispatch()
+	 * ```
+	 *
+	 * ---
+	 *
+	 * ## CodeMirror → Ace (user types in CodeMirror)
+	 *
+	 * ```
+	 * Content Script                                       MAIN World (Page)
+	 *      |                                                     |
+	 *      |  CodeMirror onChange                                |
+	 *      |  window.postMessage({ type: "SET_ACE_VALUE", id, value })
+	 *      |---------------------------------------------------> |
+	 *      |                                                     |  window.on("message")
+	 *      |                                                     |  isSyncingFromCodeMirror = true
+	 *      |                                                     |  editor.setValue(value)
+	 *      |                                                     |    └── session.on("change") fires
+	 *      |                                                     |         └── suppressed ✓
+	 *      |                                                     |  isSyncingFromCodeMirror = false
+	 * ```
 	 */
-	function subscribeToAceChanges(uniqueId: string): boolean {
-		if (!uniqueId) return false;
+	function initAceBridge(id: string): boolean {
+		const element = document.querySelector(`[data-odoo-id="${id}"]`);
+		if (!element) {
+			console.error(`[ACE BRIDGE] Element not found for id: ${id}`);
+			return false;
+		}
 
-		const aceGlobal: AceAjax.Ace | undefined = (window as any)?.ace;
+		const aceGlobal: AceAjax.Ace | undefined = (window as any).ace;
 		if (!aceGlobal) {
-			console.error("Cannot access window.ace");
+			console.error("[ACE BRIDGE] window.ace is not available");
 			return false;
 		}
 
-		try {
-			const element = document.querySelector(`[data-odoo-id="${uniqueId}"]`);
-			const ace = aceGlobal.edit(element as HTMLElement);
+		const editor: AceAjax.Editor = aceGlobal.edit(element as HTMLElement);
+		if (!editor) {
+			console.error(`[ACE BRIDGE] Failed to get Ace editor for id: ${id}`);
+			return false;
+		}
 
-			ace.session.on("change", () => {
-				window.postMessage({
-					type: "ACE_CHANGED",
-					id: uniqueId,
-					value: ace.getValue(),
-				});
-			});
+		// Prevent duplicate bridge initialization
+		if ((editor as any).__odoo_ide_bridge) {
+			console.warn(`[ACE BRIDGE] Bridge already initialized for id: ${id}`);
 			return true;
-		} catch (error) {
-			console.error("Cannot access Ace Editor", error);
-			return false;
 		}
+
+		let isSyncingFromCodeMirror = false;
+
+		// Direction 1: Ace → CodeMirror
+		// Listen to Ace changes and postMessage to content script
+		editor.session.on("change", () => {
+			if (isSyncingFromCodeMirror) return;
+
+			window.postMessage(
+				{
+					type: "ACE_CHANGED",
+					id,
+					value: editor.getValue(),
+				},
+				"*",
+			);
+		});
+
+		// Direction 2: CodeMirror → Ace
+		// Listen for SET_ACE_VALUE from content script
+		const handleSetAceValue = (event: MessageEvent) => {
+			if (event.data?.type !== "SET_ACE_VALUE") return;
+			if (event.data?.id !== id) return;
+
+			const newValue: string = event.data.value;
+
+			if (editor.getValue() === newValue) return;
+
+			isSyncingFromCodeMirror = true;
+			editor.setValue(newValue, -1);
+			isSyncingFromCodeMirror = false;
+		};
+
+		window.addEventListener("message", handleSetAceValue);
+
+		(editor as any).__odoo_ide_bridge = true;
+		console.log(`[ACE BRIDGE] Initialized for id: ${id}`);
+		return true;
 	}
 
 	/**
@@ -190,18 +293,18 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 		switch (requestType) {
 			case "GET_ODOO_VERSION":
 				return getOdooVersion();
+			case "INIT_ACE_BRIDGE":
+				if (!params || typeof params !== "string") {
+					throw new Error(`Invalid element to access Ace Editor: ${params}`);
+				}
+
+				return initAceBridge(params);
 			case "GET_ACE_VALUE":
 				if (!params || typeof params !== "string") {
 					throw new Error(`Invalid element to access Ace Editor: ${params}`);
 				}
 
 				return getAceEditor(params);
-			case "SUBSCRIBE_ACE_CHANGES":
-				if (!params || typeof params !== "string") {
-					throw new Error(`Invalid element to subscribe Ace Editor: ${params}`);
-				}
-
-				return subscribeToAceChanges(params);
 			case "GET_ACE_MODE":
 				if (!params || typeof params !== "string") {
 					throw new Error(`Invalid element to access Ace Editor: ${params}`);

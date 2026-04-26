@@ -26,9 +26,9 @@ export default function Editor({ uniqueId }: Props) {
 	useEffect(() => {
 		let mounted = true;
 		const initialize = async () => {
-			const success = await aceService.subscribeToAceChanges(uniqueId);
+			const success = await aceService.initBridge(uniqueId);
 			if (!success) {
-				Logger.error("Failed to subscribe to Ace Editor");
+				Logger.error("Failed to initialize Ace Editor Bridge");
 				return;
 			}
 

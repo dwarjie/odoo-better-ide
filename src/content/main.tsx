@@ -25,7 +25,6 @@ const observerOdoo = (odooVersion: number): void => {
 
 	const callback: MutationCallback = async (mutationList) => {
 		const aceEditors = document.querySelectorAll(".ace_editor");
-		console.log(aceEditors);
 
 		for (const editor of aceEditors) {
 			try {

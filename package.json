@@ -14,6 +14,9 @@
 		"react-dom": "^19.1.0"
 	},
 	"devDependencies": {
+		"@codemirror/commands": "^6.10.3",
+		"@codemirror/state": "^6.6.0",
+		"@codemirror/view": "^6.41.1",
 		"@crxjs/vite-plugin": "^2.0.3",
 		"@types/ace": "^0.0.52",
 		"@types/chrome": "^0.1.1",
@@ -22,6 +25,7 @@
 		"@types/react-dom": "^19.1.6",
 		"@types/webextension-polyfill": "^0.12.5",
 		"@vitejs/plugin-react": "^4.7.0",
+		"codemirror": "^6.0.2",
 		"typescript": "~5.8.3",
 		"vite": "^7.0.5",
 		"vite-plugin-zip-pack": "^1.2.4",

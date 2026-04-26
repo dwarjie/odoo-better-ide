@@ -20,9 +20,7 @@ export class AceService {
 			throw new Error("Browser runtime API is not available.");
 		}
 
-		console.log("Params", params);
 		const result = await browser.runtime.sendMessage({ requestType, params });
-
 		return result;
 	}
 
@@ -46,6 +44,16 @@ export class AceService {
 		} catch (error) {
 			Logger.error("Failed to subscribe to Ace Editor", error);
 			return false;
+		}
+	}
+
+	async getAceMode(uniqueId: string): Promise<string | null> {
+		try {
+			const aceMode = await this.sendBrowserMessage("GET_ACE_MODE", uniqueId);
+			return aceMode as string;
+		} catch (error) {
+			Logger.error("Failed to get Ace Editor Mode", error);
+			return null;
 		}
 	}
 

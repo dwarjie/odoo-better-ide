@@ -1,7 +1,7 @@
 import { Logger } from "@/services/Logger.service";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import CodeMirror from "./views/codemirror/CodeMirror";
+import Editor from "./components/Editor";
 
 export default function loader(element: HTMLElement, uniqueId: string): void {
 	if (!element || !uniqueId) {
@@ -19,7 +19,7 @@ export default function loader(element: HTMLElement, uniqueId: string): void {
 
 	createRoot(codeMirrorWrapper).render(
 		<StrictMode>
-			<CodeMirror uniqueId={uniqueId} />
+			<Editor uniqueId={uniqueId} />
 		</StrictMode>,
 	);
 }

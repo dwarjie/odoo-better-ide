@@ -25,17 +25,13 @@ export class CodeMirrorService {
 		switch (mode) {
 			case 'python':
 				return python();
-				break;
 			case 'qweb':
 			case 'xml':
 				return xml();
-				break;
 			case 'javascript':
 				return json();
-				break;
 			default:
 				return python();
-				break;
 		}
 	}
 

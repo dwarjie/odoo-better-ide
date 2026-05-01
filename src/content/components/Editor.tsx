@@ -3,6 +3,8 @@ import useCodeMirror from '@/hooks/useCodeMirror';
 import { aceService } from '@/services/Ace.service';
 import { Logger } from '@/services/Logger.service';
 import { DataAceChanged } from '@/types/types';
+import { filterAceMode } from '@/utils';
+import { StorageUtils } from '@/utils/Storage.utils';
 import { EditorState } from '@codemirror/state';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -53,6 +55,10 @@ export default function Editor({ uniqueId }: Props) {
 
 			const aceMode = await aceService.getAceMode(uniqueId);
 			setMode(aceMode);
+
+			// Update the config language
+			const configLanguage = filterAceMode(aceMode);
+			StorageUtils.updateConfig({ language: configLanguage });
 		};
 
 		const handleMessage = (event: MessageEvent<DataAceChanged>) => {

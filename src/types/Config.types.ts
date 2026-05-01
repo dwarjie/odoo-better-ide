@@ -1,4 +1,4 @@
-export type EditorLanguage = 'auto' | 'python' | 'qweb' | 'json';
+export type EditorLanguage = 'auto' | 'python' | 'qweb' | 'javascript';
 export type EditorTheme =
 	| 'one-dark'
 	| 'andromeda'

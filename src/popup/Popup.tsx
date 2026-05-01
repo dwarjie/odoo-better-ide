@@ -10,18 +10,26 @@ export default function Popup() {
 	const [config, setConfig] = useState<EditorConfigType>(DEFAULT_CONFIG);
 	const [isSaving, setIsSaving] = useState(false);
 	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const isFirstRender = useRef(true);
+	const reloadRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	useEffect(() => {
 		StorageUtils.getConfig().then(setConfig);
+
+		const removeListener = StorageUtils.onConfigChanged(() => {
+			if (reloadRef.current) clearTimeout(reloadRef.current);
+
+			reloadRef.current = setTimeout(async () => {
+				await StorageUtils.applyChanges();
+			}, 1000);
+		});
+
+		return () => {
+			removeListener();
+			if (reloadRef.current) clearTimeout(reloadRef.current);
+		};
 	}, []);
 
 	useEffect(() => {
-		if (isFirstRender.current) {
-			isFirstRender.current = false;
-			return;
-		}
-
 		setIsSaving(true);
 
 		if (debounceRef.current) {
@@ -34,9 +42,7 @@ export default function Popup() {
 		}, 300);
 
 		return () => {
-			if (debounceRef.current) {
-				clearTimeout(debounceRef.current);
-			}
+			if (debounceRef.current) clearTimeout(debounceRef.current);
 		};
 	}, [config]);
 

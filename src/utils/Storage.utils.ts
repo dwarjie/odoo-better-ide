@@ -76,4 +76,50 @@ export const StorageUtils = {
 		await StorageUtils.setConfig(updated);
 		return updated;
 	},
+
+	/*
+	 * Apply the changes to the CodeMirror element of the current tab by reloading the tab
+	 *
+	 * @returns void
+	 */
+	async applyChanges(): Promise<void> {
+		const [tab] = await browser.tabs.query({
+			active: true,
+			currentWindow: true,
+		});
+		if (!tab) return;
+
+		await browser.tabs.reload(tab.id);
+	},
+
+	/*
+	 * Listen for changes to the config and call the callback function
+	 * with the new and old config
+	 *
+	 * @param callback - The callback function to call when the config changes
+	 * @returns A cleanup function to remove the listener
+	 */
+	onConfigChanged(
+		callback: (newConfig: EditorConfig, oldConfig: EditorConfig) => void,
+	): () => void {
+		const listener = (changes: {
+			[key: string]: browser.Storage.StorageChange;
+		}) => {
+			if (!changes[CONFIG_KEY]) return;
+
+			const newConfig: EditorConfig = {
+				...DEFAULT_CONFIG,
+				...(changes[CONFIG_KEY].newValue as EditorConfig),
+			};
+			const oldConfig: EditorConfig = {
+				...DEFAULT_CONFIG,
+				...(changes[CONFIG_KEY].oldValue as EditorConfig),
+			};
+
+			callback(newConfig, oldConfig);
+		};
+
+		browser.storage.sync.onChanged.addListener(listener);
+		return () => browser.storage.onChanged.removeListener(listener);
+	},
 };

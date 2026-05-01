@@ -7,6 +7,7 @@ import { indentWithTab } from '@codemirror/commands';
 import { indentationMarkers } from '@replit/codemirror-indentation-markers';
 import { Logger } from '@/services/Logger.service';
 import useLanguageConfig from './useLanguageConfig';
+import { oneDark } from '@codemirror/theme-one-dark';
 import { codeMirrorService } from '@/services/CodeMirror.service';
 
 interface Props {
@@ -38,9 +39,17 @@ const useCodeMirror = <T extends Element>({
 	useEffect(() => {
 		if (!refContainer.current) return;
 
+		const fontTheme = EditorView.theme({
+			'.cm-content': {
+				fontFamily: '"JetBrains Mono", monospace',
+			},
+		});
+
 		const state = EditorState.create({
 			doc: initialDoc,
 			extensions: [
+				oneDark,
+				fontTheme,
 				basicSetup,
 				indentUnit.of('    '),
 				keymap.of([indentWithTab]),

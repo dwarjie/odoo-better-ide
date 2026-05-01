@@ -1,14 +1,22 @@
-import { useState } from 'react';
+import { EditorLanguage } from '@/types/Config.types';
 
-const LANGUAGES = [
+interface LANGUAGE_ITEMS {
+	value: EditorLanguage;
+	label: string;
+}
+
+const LANGUAGES: LANGUAGE_ITEMS[] = [
 	{ value: 'python', label: 'Python' },
 	{ value: 'qweb', label: 'QWeb / XML' },
 	{ value: 'json', label: 'JSON' },
 ];
 
-export default function LanguageConfig() {
-	const [language, setLanguage] = useState('auto');
+interface Props {
+	value: EditorLanguage;
+	onChange: (value: EditorLanguage) => void;
+}
 
+export default function LanguageConfig({ value, onChange }: Props) {
 	return (
 		<div className="card bg-base-200 border-base-300 border">
 			<div className="card-body gap-2 p-3">
@@ -16,8 +24,8 @@ export default function LanguageConfig() {
 					<label className="text-sm font-medium">Language</label>
 					<select
 						className="select select-bordered select-xs w-36 text-xs"
-						value={language}
-						onChange={(e) => setLanguage(e.target.value)}
+						value={value}
+						onChange={(e) => onChange(e.target.value as EditorLanguage)}
 					>
 						<option value="auto">Auto detect</option>
 						{LANGUAGES.map((lang) => (
@@ -28,7 +36,7 @@ export default function LanguageConfig() {
 					</select>
 				</div>
 
-				{language !== 'auto' && (
+				{value !== 'auto' && (
 					<div
 						role="alert"
 						className="alert alert-warning gap-2 rounded-lg px-3 py-2 text-xs"
@@ -54,7 +62,7 @@ export default function LanguageConfig() {
 					</div>
 				)}
 
-				{language === 'auto' && (
+				{value === 'auto' && (
 					<p className="text-base-content/50 text-xs leading-relaxed">
 						Language is automatically detected from the Ace editor mode.
 					</p>

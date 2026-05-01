@@ -1,13 +1,14 @@
 import { GitHubLogoIcon, HeartIcon, ReaderIcon } from '@radix-ui/react-icons';
+import pkg from '@/../package.json';
 
 export default function Footer() {
 	return (
 		<footer className="border-base-300 mt-auto flex items-center justify-between border-t px-4 py-3">
-			<span className="text-base-content/30 font-mono text-xs">v0.1.0</span>
+			<span className="text-base-content/30 font-mono text-xs">{`v${pkg.version}`}</span>
 
 			<div className="flex items-center gap-1">
 				<a
-					href="https://github.com/your-repo/odoo-better-ide"
+					href="https://github.com/dwarjie/odoo-better-ide"
 					target="_blank"
 					rel="noopener noreferrer"
 					title="View source on GitHub"

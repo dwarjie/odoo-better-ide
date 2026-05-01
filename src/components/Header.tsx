@@ -1,6 +1,15 @@
+import type { EditorConfig as EditorConfigType } from '@/types/Config.types';
 import ToggleSwitch from './ToggleSwitch';
 
-export default function Header() {
+interface Props {
+	updateConfig: <K extends keyof EditorConfigType>(
+		key: K,
+		value: EditorConfigType[K],
+	) => void;
+	config: EditorConfigType;
+}
+
+export default function Header({ updateConfig, config }: Props) {
 	return (
 		<header className="border-base-300 flex items-center justify-between border-b px-4 py-3">
 			<div className="flex items-center gap-2">
@@ -31,7 +40,10 @@ export default function Header() {
 					Odoo Better IDE
 				</span>
 			</div>
-			<ToggleSwitch />
+			<ToggleSwitch
+				value={config.enabled}
+				onChange={(value) => updateConfig('enabled', value)}
+			/>
 		</header>
 	);
 }

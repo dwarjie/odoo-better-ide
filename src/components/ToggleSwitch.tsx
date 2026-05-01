@@ -1,20 +1,21 @@
-import { useState } from 'react';
+interface Props {
+	value: boolean;
+	onChange: (value: boolean) => void;
+}
 
-export default function ToggleSwitch() {
-	const [enabled, setEnabled] = useState(true);
-
+export default function ToggleSwitch({ value, onChange }: Props) {
 	return (
 		<label className="flex cursor-pointer items-center gap-2">
 			<span
-				className={`font-mono text-xs ${enabled ? 'text-success' : 'text-base-content/40'}`}
+				className={`font-mono text-xs ${value ? 'text-success' : 'text-base-content/40'}`}
 			>
-				{enabled ? 'ON' : 'OFF'}
+				{value ? 'ON' : 'OFF'}
 			</span>
 			<input
 				type="checkbox"
 				className="toggle toggle-primary toggle-sm"
-				checked={enabled}
-				onChange={(e) => setEnabled(e.target.checked)}
+				checked={value}
+				onChange={(e) => onChange(e.target.checked)}
 			/>
 		</label>
 	);

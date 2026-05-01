@@ -1,12 +1,14 @@
 import LoadingIndicator from '@/components/Loading/Loading';
 import useCodeMirror from '@/hooks/useCodeMirror';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { aceService } from '@/services/Ace.service';
 import { Logger } from '@/services/Logger.service';
 import { DataAceChanged } from '@/types/types';
 import { filterAceMode } from '@/utils';
 import { StorageUtils } from '@/utils/Storage.utils';
 import { EditorState } from '@codemirror/state';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import type { EditorConfig as EditorConfigType } from '@/types/Config.types';
+import { DEFAULT_CONFIG } from '@/data/Constants';
 
 interface Props {
 	uniqueId: string;
@@ -14,6 +16,11 @@ interface Props {
 
 export default function Editor({ uniqueId }: Props) {
 	const [mode, setMode] = useState('python');
+	const [config, setConfig] = useState<EditorConfigType>(DEFAULT_CONFIG);
+
+	useEffect(() => {
+		StorageUtils.getConfig().then(setConfig);
+	}, []);
 
 	const handleCodeMirrorChange = useCallback(
 		(state: EditorState) => {
@@ -32,6 +39,7 @@ export default function Editor({ uniqueId }: Props) {
 	const [refContainer, editorView, updateCodeMirrorContent] =
 		useCodeMirror<HTMLDivElement>({
 			initialDoc: `# Hello this is Odoo Better IDE!`,
+			config,
 			mode,
 			onChange: handleCodeMirrorChange,
 		});

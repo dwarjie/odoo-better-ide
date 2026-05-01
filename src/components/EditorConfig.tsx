@@ -1,53 +1,22 @@
-import { useEffect, useRef, useState } from 'react';
-import { DEFAULT_CONFIG } from '@/data/Constants';
 import FontSizeConfig from './FontSizeConfig';
 import FontConfig from './FontConfig';
 import ThemeConfig from './ThemeConfig';
 import LanguageConfig from './LanguageConfig';
 import type { EditorConfig as EditorConfigType } from '@/types/Config.types';
-import { StorageUtils } from '@/utils/Storage.utils';
 
-export default function EditorConfig() {
-	const [config, setConfig] = useState<EditorConfigType>(DEFAULT_CONFIG);
-	const [isSaving, setIsSaving] = useState(false);
-	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const isFirstRender = useRef(true);
-
-	useEffect(() => {
-		StorageUtils.getConfig().then(setConfig);
-	}, []);
-
-	useEffect(() => {
-		if (isFirstRender.current) {
-			isFirstRender.current = false;
-			return;
-		}
-
-		setIsSaving(true);
-
-		if (debounceRef.current) {
-			clearTimeout(debounceRef.current);
-		}
-
-		debounceRef.current = setTimeout(async () => {
-			await StorageUtils.setConfig(config);
-			setIsSaving(false);
-		}, 500);
-
-		return () => {
-			if (debounceRef.current) {
-				clearTimeout(debounceRef.current);
-			}
-		};
-	}, [config]);
-
-	const updateConfig = <K extends keyof EditorConfigType>(
+interface Props {
+	isSaving: boolean;
+	updateConfig: <K extends keyof EditorConfigType>(
 		key: K,
 		value: EditorConfigType[K],
-	) => {
-		setConfig((prev) => ({ ...prev, [key]: value }));
-	};
-
+	) => void;
+	config: EditorConfigType;
+}
+export default function EditorConfig({
+	isSaving,
+	updateConfig,
+	config,
+}: Props) {
 	return (
 		<section className="flex flex-col gap-3">
 			<div className="flex items-center justify-between">

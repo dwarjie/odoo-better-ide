@@ -35,6 +35,7 @@ export default async function loader(
 	}
 
 	embedGoogleFont();
+	element.style = 'display: none;';
 	const codeMirrorWrapper = document.createElement('div');
 	codeMirrorWrapper.id = `code-mirror-${uniqueId}`;
 	element.insertAdjacentElement('afterend', codeMirrorWrapper);

@@ -10,26 +10,21 @@ export default function Popup() {
 	const [config, setConfig] = useState<EditorConfigType>(DEFAULT_CONFIG);
 	const [isSaving, setIsSaving] = useState(false);
 	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const reloadRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const savedConfigRef = useRef<EditorConfigType | null>(null);
 
 	useEffect(() => {
-		StorageUtils.getConfig().then(setConfig);
-
-		const removeListener = StorageUtils.onConfigChanged(() => {
-			if (reloadRef.current) clearTimeout(reloadRef.current);
-
-			reloadRef.current = setTimeout(async () => {
-				await StorageUtils.applyChanges();
-			}, 1000);
+		StorageUtils.getConfig().then((savedConfig) => {
+			savedConfigRef.current = savedConfig;
+			setConfig(savedConfig);
 		});
-
-		return () => {
-			removeListener();
-			if (reloadRef.current) clearTimeout(reloadRef.current);
-		};
 	}, []);
 
 	useEffect(() => {
+		if (!savedConfigRef.current) return;
+
+		if (JSON.stringify(savedConfigRef.current) === JSON.stringify(config))
+			return;
+
 		setIsSaving(true);
 
 		if (debounceRef.current) {
@@ -38,8 +33,10 @@ export default function Popup() {
 
 		debounceRef.current = setTimeout(async () => {
 			await StorageUtils.setConfig(config);
+			savedConfigRef.current = config;
 			setIsSaving(false);
-		}, 300);
+			await StorageUtils.applyChanges();
+		}, 1000);
 
 		return () => {
 			if (debounceRef.current) clearTimeout(debounceRef.current);

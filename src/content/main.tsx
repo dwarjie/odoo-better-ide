@@ -31,7 +31,7 @@ const observerOdoo = (odooVersion: number): void => {
 				if (uniqueId) continue;
 
 				const newId = aceService.setUniqueId(editor as HTMLElement);
-				loader(editor as HTMLElement, newId);
+				loader(editor as HTMLElement, newId, odooVersion);
 			} catch (error) {
 				return error;
 			}

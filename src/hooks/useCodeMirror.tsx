@@ -1,17 +1,24 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { EditorView, keymap } from '@codemirror/view';
-import { Compartment, EditorState } from '@codemirror/state';
-import { basicSetup } from 'codemirror';
-import { indentUnit } from '@codemirror/language';
-import { indentWithTab } from '@codemirror/commands';
-import { indentationMarkers } from '@replit/codemirror-indentation-markers';
-import { Logger } from '@/services/Logger.service';
-import useLanguageConfig from './useLanguageConfig';
 import { codeMirrorService } from '@/services/CodeMirror.service';
+import { Logger } from '@/services/Logger.service';
+import { odooService } from '@/services/Odoo.service';
 import type { EditorConfig as EditorConfigType } from '@/types/Config.types';
+import { getModelIdElem } from '@/utils';
+import { getFontFamily, getFontSize } from '@/utils/Config.utils';
+import { fetchModelIdValue } from '@/utils/OdooRPC.utils';
+import { autocompletion } from '@codemirror/autocomplete';
+import { indentWithTab } from '@codemirror/commands';
+import { indentUnit } from '@codemirror/language';
+import { EditorState } from '@codemirror/state';
+import { EditorView, keymap } from '@codemirror/view';
+import { indentationMarkers } from '@replit/codemirror-indentation-markers';
+import { basicSetup } from 'codemirror';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import useFontConfig from './useFontConfig';
+import useLanguageConfig from './useLanguageConfig';
 import useThemeConfig from './useThemeConfig';
 
 interface Props {
+	odooVersion: number;
 	initialDoc: string;
 	config: EditorConfigType;
 	mode: string;
@@ -22,45 +29,56 @@ type UseCodeMirrorReturn<T extends Element> = [
 	React.RefObject<T | null>,
 	EditorView | null,
 	(content: string) => void,
+	() => void,
 ];
 
 const useCodeMirror = <T extends Element>({
+	odooVersion,
 	initialDoc,
 	config,
 	mode,
 	onChange,
 }: Props): UseCodeMirrorReturn<T> => {
 	const refContainer = useRef<T | null>(null);
-	const [editorView, setEditorView] = React.useState<EditorView | null>(null);
 	const editorViewRef = useRef<EditorView | null>(null);
+	const [editorView, setEditorView] = useState<EditorView | null>(null);
 
 	// Config compartment
-	const fontFamilyCompartment = useRef<Compartment>(new Compartment());
-	const fontSizeCompartment = useRef<Compartment>(new Compartment());
+	const { fontFamilyCompartment, fontSizeCompartment } = useFontConfig({
+		editorView,
+		config,
+	});
 	const { languageCompartment } = useLanguageConfig({
 		editorView,
 		mode,
+		odooVersion,
 	});
 	const { themeCompartment } = useThemeConfig({
 		editorView,
 		theme: config.theme,
 	});
 
-	const getFontFamily = () => {
-		return EditorView.theme({
-			'.cm-content': {
-				fontFamily: `"${config.fontFamily}", monospace`,
-			},
-		});
-	};
+	const customCompletionIconTheme = EditorView.theme({
+		// Fields / data
+		'.cm-completionIcon-property::after': { content: '"○"' }, // field
+		'.cm-completionIcon-variable::after': { content: '"◈"' }, // variable
+		'.cm-completionIcon-constant::after': { content: '"◆"' }, // constant value
 
-	const getFontSize = () => {
-		return EditorView.theme({
-			'.cm-content, .cm-gutter': {
-				fontSize: `${config.fontSize}px`,
-			},
-		});
-	};
+		// Callables
+		'.cm-completionIcon-function::after': { content: '"ƒ"' }, // function
+		'.cm-completionIcon-method::after': { content: '"⊕"' }, // method
+
+		// Structure / types
+		'.cm-completionIcon-class::after': { content: '"⬡"' }, // class
+		'.cm-completionIcon-interface::after': { content: '"◻"' }, // interface
+		'.cm-completionIcon-type::after': { content: '"⬟"', fontSize: '10px' }, // type
+		'.cm-completionIcon-enum::after': { content: '"≡"' }, // enum
+
+		// Other
+		'.cm-completionIcon-keyword::after': { content: '"⌘"' }, // keyword
+		'.cm-completionIcon-namespace::after': { content: '"⬚"' }, // namespace
+		'.cm-completionIcon-text::after': { content: '"❝"' }, // text/snippet
+	});
 
 	useEffect(() => {
 		if (!refContainer.current) return;
@@ -68,19 +86,23 @@ const useCodeMirror = <T extends Element>({
 		const state = EditorState.create({
 			doc: initialDoc,
 			extensions: [
+				autocompletion(),
 				basicSetup,
 				indentUnit.of('    '),
 				keymap.of([indentWithTab]),
 				indentationMarkers(),
 				themeCompartment.of(codeMirrorService.getTheme(config.theme)),
-				languageCompartment.of(codeMirrorService.getLanguageMode(mode)),
-				fontFamilyCompartment.current.of(getFontFamily()),
-				fontSizeCompartment.current.of(getFontSize()),
+				languageCompartment.of(
+					codeMirrorService.getCompletion(mode, odooVersion),
+				),
+				fontFamilyCompartment.of(getFontFamily(config)),
+				fontSizeCompartment.of(getFontSize(config)),
 				EditorView.updateListener.of((update) => {
 					if (update.docChanged && onChange) {
 						onChange && onChange(update.state);
 					}
 				}),
+				customCompletionIconTheme,
 			],
 		});
 
@@ -98,25 +120,23 @@ const useCodeMirror = <T extends Element>({
 		};
 	}, [refContainer]);
 
-	// Reconfigure font family when config.fontFamily changes
-	useEffect(() => {
-		const view = editorViewRef.current;
-		if (!view) return;
+	const initializeCompletion = useCallback(() => {
+		const initialize = async () => {
+			const resModel = await odooService.getPageModel();
+			if (!resModel) return;
+			codeMirrorService.setPageModel(resModel);
 
-		view.dispatch({
-			effects: fontFamilyCompartment.current.reconfigure(getFontFamily()),
-		});
-	}, [config.fontFamily]);
+			const modelIdElem = getModelIdElem(odooVersion);
+			if (!modelIdElem) return;
 
-	// Reconfigure font size when config.fontSize changes
-	useEffect(() => {
-		const view = editorViewRef.current;
-		if (!view) return;
+			const modelName = await fetchModelIdValue(resModel, odooVersion);
+			if (!modelName) return;
 
-		view.dispatch({
-			effects: fontSizeCompartment.current.reconfigure(getFontSize()),
-		});
-	}, [config.fontSize]);
+			codeMirrorService.setCompletionModel(modelName);
+		};
+
+		initialize();
+	}, []);
 
 	const updateCodeMirrorContent = useCallback((content: string) => {
 		const view = editorViewRef.current;
@@ -131,7 +151,12 @@ const useCodeMirror = <T extends Element>({
 		codeMirrorService.setValue(view, content);
 	}, []);
 
-	return [refContainer, editorView, updateCodeMirrorContent];
+	return [
+		refContainer,
+		editorView,
+		updateCodeMirrorContent,
+		initializeCompletion,
+	];
 };
 
 export default useCodeMirror;

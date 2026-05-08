@@ -9,14 +9,17 @@ import { StorageUtils } from '@/utils/Storage.utils';
 import { EditorState } from '@codemirror/state';
 import type { EditorConfig as EditorConfigType } from '@/types/Config.types';
 import { DEFAULT_CONFIG } from '@/data/Constants';
+import WelcomeBanner from '@/components/WelcomeBanner/WelcomeBanner';
 
 interface Props {
 	uniqueId: string;
+	odooVersion: number;
 }
 
-export default function Editor({ uniqueId }: Props) {
+export default function Editor({ uniqueId, odooVersion }: Props) {
 	const [mode, setMode] = useState('python');
 	const [config, setConfig] = useState<EditorConfigType>(DEFAULT_CONFIG);
+	const [showBanner, setShowBanner] = useState(false);
 
 	useEffect(() => {
 		StorageUtils.getConfig().then(setConfig);
@@ -36,18 +39,25 @@ export default function Editor({ uniqueId }: Props) {
 		[uniqueId],
 	);
 
-	const [refContainer, editorView, updateCodeMirrorContent] =
-		useCodeMirror<HTMLDivElement>({
-			initialDoc: `# Hello this is Odoo Better IDE!`,
-			config,
-			mode,
-			onChange: handleCodeMirrorChange,
-		});
+	const [
+		refContainer,
+		editorView,
+		updateCodeMirrorContent,
+		initializeCompletion,
+	] = useCodeMirror<HTMLDivElement>({
+		odooVersion,
+		initialDoc: '',
+		config,
+		mode,
+		onChange: handleCodeMirrorChange,
+	});
 
 	const updateContentRef = useRef(updateCodeMirrorContent);
+	const initializeCompletionRef = useRef(initializeCompletion);
 	useEffect(() => {
+		initializeCompletionRef.current = initializeCompletion;
 		updateContentRef.current = updateCodeMirrorContent;
-	}, [updateCodeMirrorContent]);
+	}, [updateCodeMirrorContent, initializeCompletion]);
 
 	useEffect(() => {
 		let mounted = true;
@@ -58,20 +68,24 @@ export default function Editor({ uniqueId }: Props) {
 				return;
 			}
 
-			const aceValue = await aceService.getAceValue(uniqueId);
-			if (aceValue && mounted) updateContentRef.current(aceValue);
-
 			const aceMode = await aceService.getAceMode(uniqueId);
 			setMode(aceMode);
+
+			const aceValue = await aceService.getAceValue(uniqueId);
+			if (aceValue && mounted) updateContentRef.current(aceValue);
 
 			// Update the config language
 			const configLanguage = filterAceMode(aceMode);
 			StorageUtils.updateConfig({ language: configLanguage });
+
+			initializeCompletionRef.current();
+			setShowBanner(true);
 		};
 
 		const handleMessage = (event: MessageEvent<DataAceChanged>) => {
 			if (event.data?.type === 'ACE_CHANGED' && event.data?.id === uniqueId) {
 				updateContentRef.current(event.data.value);
+				initializeCompletionRef.current();
 			}
 		};
 
@@ -87,6 +101,9 @@ export default function Editor({ uniqueId }: Props) {
 	return (
 		<>
 			{!editorView && <LoadingIndicator />}
+			{showBanner && (
+				<WelcomeBanner config={config} onDismiss={() => setShowBanner(false)} />
+			)}
 			<div className="codemirror" data-mode={mode} ref={refContainer}></div>
 		</>
 	);

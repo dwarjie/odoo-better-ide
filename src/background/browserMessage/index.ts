@@ -38,6 +38,13 @@ export async function handleBrowserMessage(
  * Processes the message based on the request type
  * Example: GET_ODOO_VERSION -> Returns the Odoo version
  *
+ * Available request types:
+ * - GET_ODOO_VERSION -> Returns the Odoo version
+ * - INIT_ACE_BRIDGE -> Initializes a two-way communication bridge between the Ace Editor (MAIN world)
+ * and the CodeMirror editor (content script) for a specific editor instance.
+ * - GET_ACE_VALUE -> Gets the Ace Editor value through the window.ace object
+ * - GET_ACE_MODE -> Gets the Ace Editor mode through the window.ace object
+ *
  * This function is run in the MAIN world
  *
  * @param requestType - The request type
@@ -88,6 +95,24 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 		return {
 			version: isNaN(majorVersion) ? null : majorVersion,
 		};
+	}
+
+	/**
+	 * Gets the page model through the window.odoo object
+	 *
+	 * @returns The page model if available, null otherwise
+	 */
+	function getPageModel(): string | null {
+		const resModel: string =
+			(window as any).odoo.__WOWL_DEBUG__?.root?.actionService
+				?.currentController?.props?.resModel ?? '';
+
+		if (!resModel) {
+			console.warn('Cannot access window.odoo.__WOWL_DEBUG__.');
+			return null;
+		}
+
+		return resModel;
 	}
 
 	/**
@@ -291,6 +316,8 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 		switch (requestType) {
 			case 'GET_ODOO_VERSION':
 				return getOdooVersion();
+			case 'GET_PAGE_MODEL':
+				return getPageModel();
 			case 'INIT_ACE_BRIDGE':
 				if (!params || typeof params !== 'string') {
 					throw new Error(`Invalid element to access Ace Editor: ${params}`);

@@ -14,6 +14,7 @@ const getConfig = async (): Promise<EditorConfig> => {
 export default async function loader(
 	element: HTMLElement,
 	uniqueId: string,
+	odooVersion: number,
 ): Promise<void> {
 	if (!element || !uniqueId) {
 		Logger.error('No element or uniqueId provided in the loader.');
@@ -42,7 +43,7 @@ export default async function loader(
 
 	createRoot(codeMirrorWrapper).render(
 		<StrictMode>
-			<Editor uniqueId={uniqueId} />
+			<Editor uniqueId={uniqueId} odooVersion={odooVersion} />
 		</StrictMode>,
 	);
 }

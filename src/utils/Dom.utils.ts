@@ -23,3 +23,21 @@ export const embedGoogleFont = (): void => {
 		'https://fonts.googleapis.com/css2?family=Cascadia+Code&family=Fira+Code&family=JetBrains+Mono&family=Source+Code+Pro&display=swap';
 	document.head.appendChild(link3);
 };
+
+/**
+ * Get the model_id (for Odoo 17+) or model (for Odoo 15/16) element from the DOM
+ *
+ * Used to get the model of ir.actions.server or other models
+ *
+ * @returns The model_id/model element or null if not found
+ */
+export const getModelIdElem = (odooVersion: number): Element | null => {
+	if (odooVersion <= 16) {
+		const modelElem = document.querySelector('[name="model"]');
+		if (modelElem) return modelElem;
+
+		return document.querySelector('[name="model_id"]');
+	}
+
+	return document.querySelector('[name="model_id"]');
+};

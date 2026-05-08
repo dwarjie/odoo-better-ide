@@ -19,7 +19,7 @@ export default function Footer() {
 				</a>
 
 				<a
-					href="https://your-donation-link.com"
+					href="https://ko-fi.com/dwarjie"
 					target="_blank"
 					rel="noopener noreferrer"
 					title="Support the project"
@@ -28,7 +28,7 @@ export default function Footer() {
 					<HeartIcon className="h-3.5 w-3.5" />
 					<span className="text-xs">Support</span>
 				</a>
-
+				{/* 
 				<a
 					href="https://your-docs-site.com"
 					target="_blank"
@@ -38,7 +38,7 @@ export default function Footer() {
 				>
 					<ReaderIcon className="h-3.5 w-3.5" />
 					<span className="text-xs">Docs</span>
-				</a>
+				</a> */}
 			</div>
 		</footer>
 	);

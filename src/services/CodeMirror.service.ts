@@ -3,6 +3,7 @@ import {
 	Completion,
 	CompletionContext,
 	CompletionResult,
+	startCompletion,
 } from '@codemirror/autocomplete';
 import { json } from '@codemirror/lang-json';
 import {
@@ -45,6 +46,7 @@ import { buildOdooXmlSchemaV18 } from '@/data/OdooXMLCompletion.v18';
 import { buildOdooXmlSchemaV17 } from '@/data/OdooXMLCompletion.v17';
 import { buildOdooXmlSchemaV16 } from '@/data/OdooXMLCompletion.v16';
 import { buildOdooXmlSchemaV15 } from '@/data/OdooXMLCompletion.v15';
+import { autoCloseSelfClosingTag } from '@/extension/autoCloseSelfClosingTag';
 
 export class CodeMirrorService {
 	private static codeMirrorInstance: CodeMirrorService | null = null;
@@ -190,11 +192,24 @@ export class CodeMirrorService {
 			case 'qweb':
 			case 'xml':
 				return [
+					autoCloseTags,
 					xmlLanguage,
 					xmlLanguage.data.of({
 						autocomplete: this.customOdooXmlCompletion.bind(this),
 					}),
-					autoCloseTags,
+					autoCloseSelfClosingTag,
+					// Re-trigger completion when cursor enters quotes
+					EditorView.updateListener.of((update) => {
+						if (!update.docChanged) return;
+						const cursor = update.state.selection.main.head;
+						const charBefore = update.state.sliceDoc(cursor - 1, cursor);
+						const charAfter = update.state.sliceDoc(cursor, cursor + 1);
+
+						// Cursor is now sitting inside "" — explicitly start completion
+						if (charBefore === '"' && charAfter === '"') {
+							startCompletion(update.view);
+						}
+					}),
 				];
 			case 'javascript':
 				return [json()];

@@ -1,0 +1,57 @@
+.odoo-ide-banner {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 10px 14px;
+	background-color: #1e2a3a;
+	border-bottom: 1px solid #2d3f55;
+	color: #a8bfd4;
+	font-size: 12px;
+	line-height: 1.5;
+	font-family: inherit;
+}
+
+.odoo-ide-banner__content {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	flex: 1;
+}
+
+.odoo-ide-banner__icon {
+	flex-shrink: 0;
+	font-size: 13px;
+	margin-top: 1px;
+}
+
+.odoo-ide-banner__text {
+	flex: 1;
+}
+
+.odoo-ide-banner__text strong {
+	color: #c9dff0;
+}
+
+.odoo-ide-banner__note {
+	display: block;
+	margin-top: 3px;
+	color: #7a9bb5;
+}
+
+.odoo-ide-banner__dismiss {
+	flex-shrink: 0;
+	background: none;
+	border: none;
+	color: #7a9bb5;
+	cursor: pointer;
+	font-size: 12px;
+	padding: 0 2px;
+	line-height: 1;
+	margin-top: 1px;
+	transition: color 0.15s;
+}
+
+.odoo-ide-banner__dismiss:hover {
+	color: #c9dff0;
+}

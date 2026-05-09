@@ -9,8 +9,8 @@
 		"dev:chrome": "cross-env BROWSER=chrome vite",
 		"dev:firefox": "cross-env BROWSER=firefox vite build --watch",
 		"build": "tsc -b && vite build",
-		"build:chrome": "cross-env BROWSER=chrome tsc -b && vite build",
-		"build:firefox": "cross-env BROWSER=firefox tsc -b && vite build",
+		"build:chrome": "cross-env BROWSER=chrome tsc -b && cross-env BROWSER=chrome vite build",
+		"build:firefox": "cross-env BROWSER=firefox tsc -b && cross-env BROWSER=firefox vite build",
 		"preview": "vite preview"
 	},
 	"dependencies": {

@@ -8,6 +8,9 @@ export const firefoxManifest = {
 	browser_specific_settings: {
 		gecko: {
 			id: 'odoobetteride@odoobetteride.com',
+			data_collection_permissions: {
+				required: ['none'],
+			},
 		},
 	},
 };

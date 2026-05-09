@@ -1,4 +1,4 @@
-import { GitHubLogoIcon, HeartIcon, ReaderIcon } from '@radix-ui/react-icons';
+import { GitHubLogoIcon, HeartIcon } from '@radix-ui/react-icons';
 import pkg from '@/../package.json';
 
 export default function Footer() {

@@ -4,12 +4,10 @@
     <p>A supercharged code editor overlay for Odoo — built on CodeMirror 6.</p>
     <div>
         <a href="https://chromewebstore.google.com/detail/odoo-better-ide/gdgcmoimojllogljdillajcgdgecfknd">
-            <img src="https://img.shields.io/chrome-web-store/rating/gdgcmoimojllogljdillajcgdgecfknd?logo=chromewebstore&logoColor=white&labelColor=%233871e1
-" alt="Chrome Web Store">
+            <img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/rating/gdgcmoimojllogljdillajcgdgecfknd?style=flat-square&logo=chromewebstore&logoColor=white&label=Rating&color=%233871e1"/>
         </a>
         <a href="https://addons.mozilla.org/en-US/firefox/addon/odoo-better-ide/">
-            <img src="https://img.shields.io/amo/rating/odoo-better-ide?logo=firefoxbrowser&logoColor=white&labelColor=%233871e1
-" alt="Firefox Add-ons">
+            <img alt="Mozilla Add-on" src="https://img.shields.io/amo/rating/odoo-better-ide?style=flat-square&logo=firefoxbrowser&logoColor=white&label=Rating&color=%23ed6449"/>
         </a>
     </div>
 </div>

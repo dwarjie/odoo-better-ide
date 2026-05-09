@@ -419,7 +419,9 @@ export const MODEL_COMPLETION_REGISTRY: ModelCompletionRegistry = {
 	'base.automation': BASE_AUTOMATION,
 };
 
-export const getModelCompletions = (model: string): Completion[] => {
+export const getModelCompletions = (model: string | null): Completion[] => {
+	if (!model) return [];
+
 	const entries = MODEL_COMPLETION_REGISTRY[model];
 	if (!entries) return [];
 	return entries.map(toCompletion);

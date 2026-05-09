@@ -74,7 +74,8 @@ export class CodeMirrorService {
 		this.pageModel = model;
 	}
 
-	private async getFields(model: string): Promise<OdooFieldMap> {
+	private async getFields(model: string | null): Promise<OdooFieldMap> {
+		if (!model) return {};
 		// Return cached fields if available
 		if (this.fieldCache.has(model)) {
 			return this.fieldCache.get(model)!;
@@ -140,7 +141,7 @@ export class CodeMirrorService {
 
 		// Merge boosted field completions into global completion
 		// so they always appear but are prioritized
-		if (this.completionModel && this.pageModel) {
+		if (this.completionModel || this.pageModel) {
 			const fields = await this.getFields(this.completionModel);
 			const fieldCompletions = this.buildFieldCompletions(fields);
 			const modelCompletions = getModelCompletions(this.pageModel);

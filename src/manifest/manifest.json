@@ -2,7 +2,7 @@
 	"manifest_version": 3,
 	"name": "Odoo Better Ide",
 	"description": "A supercharged code editor overlay for Odoo — built on CodeMirror 6.",
-	"version": "1.5.0",
+	"version": "1.6.0",
 	"icons": {
 		"16": "images/icon-16.png",
 		"32": "images/icon-32.png",
@@ -20,8 +20,8 @@
 	"content_scripts": [
 		{
 			"js": ["src/content/main.tsx"],
-			"matches": ["https://*/*"]
+			"matches": ["<all_urls>"]
 		}
 	],
-	"host_permissions": ["https://*/*"]
+	"host_permissions": ["<all_urls>"]
 }

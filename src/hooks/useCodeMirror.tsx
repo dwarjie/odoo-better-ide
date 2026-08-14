@@ -78,6 +78,23 @@ const useCodeMirror = <T extends Element>({
 		'.cm-completionIcon-keyword::after': { content: '"⌘"' }, // keyword
 		'.cm-completionIcon-namespace::after': { content: '"⬚"' }, // namespace
 		'.cm-completionIcon-text::after': { content: '"❝"' }, // text/snippet
+
+		// Custom
+		'&': {
+			width: '100%',
+			height: '100%',
+			minHeight: '0',
+			minWidth: '0',
+			overflow: 'hidden',
+		},
+
+		'.cm-scroller': {
+			width: '100%',
+			height: '100%',
+			minHeight: '0',
+			minWidth: '0',
+			overflow: 'auto',
+		},
 	});
 
 	useEffect(() => {

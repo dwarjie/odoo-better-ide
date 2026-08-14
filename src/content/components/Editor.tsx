@@ -104,7 +104,18 @@ export default function Editor({ uniqueId, odooVersion }: Props) {
 			{showBanner && (
 				<WelcomeBanner config={config} onDismiss={() => setShowBanner(false)} />
 			)}
-			<div className="codemirror" data-mode={mode} ref={refContainer}></div>
+			<div
+				className="codemirror"
+				data-mode={mode}
+				ref={refContainer}
+				style={{
+					width: '100%',
+					height: '100%',
+					minHeight: 0,
+					minWidth: 0,
+					overflow: 'hidden',
+				}}
+			></div>
 		</>
 	);
 }

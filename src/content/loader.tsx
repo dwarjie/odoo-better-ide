@@ -39,6 +39,16 @@ export default async function loader(
 	element.style = 'display: none;';
 	const codeMirrorWrapper = document.createElement('div');
 	codeMirrorWrapper.id = `code-mirror-${uniqueId}`;
+	codeMirrorWrapper.style.cssText = `
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		height: 80%;
+		min-height: 0;
+		min-width: 0;
+		overflow: hidden;
+		position: relative;
+	`;
 	element.insertAdjacentElement('afterend', codeMirrorWrapper);
 
 	createRoot(codeMirrorWrapper).render(

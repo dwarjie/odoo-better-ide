@@ -243,7 +243,7 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 
 		// Direction 1: Ace → CodeMirror
 		// Listen to Ace changes and postMessage to content script
-		editor.session.on('change', () => {
+		function onChange() {
 			if (isSyncingFromCodeMirror) return;
 
 			window.postMessage(
@@ -254,7 +254,9 @@ function processMessage(requestType: string, params?: unknown | null): unknown {
 				},
 				'*',
 			);
-		});
+		}
+		editor.session.on('change', onChange);
+		editor.on('changeSession', onChange);
 
 		// Direction 2: CodeMirror → Ace
 		// Listen for SET_ACE_VALUE from content script

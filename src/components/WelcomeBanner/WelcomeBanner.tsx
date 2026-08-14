@@ -14,8 +14,11 @@ export default function WelcomeBanner({ config, onDismiss }: Props) {
 					<strong>NOTE!</strong>
 					<br />
 					<span className="odoo-ide-banner__note">
-						Make sure to set the Model field, save your record, and reload the
-						page if the completion doesn't work.
+						COMPLETION ONLY WORK IF THERE'S A MODEL FIELD
+					</span>
+					<span className="odoo-ide-banner__note">
+						Save your record, and reload the page if the completion doesn't
+						work.
 					</span>
 				</div>
 			</div>
